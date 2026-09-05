@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Auditoría de jornada 40 h · Checklist en vivo</title>
+<style>
+  :root{
+    --ink:#12211f;--ink-soft:#3d4f4b;--bg:#eef2f0;--surface:#ffffff;
+    --brand:#0e6e63;--brand-deep:#0a4f47;--line:#d6dedb;
+    --ok:#157f52;--ok-bg:#e5f3ea;--no:#be3a34;--no-bg:#fbe9e8;
+    --na:#6f7a86;--na-bg:#eceff2;--warn:#a9760a;
+    --sanc-ink:#7a5a06;--sanc-bg:#fbf4df;--sanc-line:#f0e2b8;
+    --shadow:0 1px 2px rgba(18,33,31,.06),0 6px 20px rgba(18,33,31,.06);
+    --serif:Georgia,"Times New Roman",serif;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{font-family:var(--sans);color:var(--ink);background:var(--bg);line-height:1.45;-webkit-text-size-adjust:100%;padding-bottom:96px}
+  a{color:var(--brand)}
+  header{position:sticky;top:0;z-index:40;background:var(--brand-deep);color:#fff;padding:calc(14px + env(safe-area-inset-top,0)) 16px 12px;box-shadow:0 2px 10px rgba(10,79,71,.25)}
+  .h-title{font-family:var(--serif);font-size:18px;font-weight:700;letter-spacing:.2px;margin:0}
+  .h-sub{font-size:12px;opacity:.82;margin:2px 0 10px}
+  .prog-row{display:flex;align-items:center;gap:10px}
+  .prog-track{flex:1;height:9px;border-radius:99px;background:rgba(255,255,255,.22);overflow:hidden}
+  .prog-fill{height:100%;width:0;background:#8ee3b0;border-radius:99px;transition:width .25s ease}
+  .prog-num{font-size:13px;font-variant-numeric:tabular-nums;min-width:74px;text-align:right}
+  .dot{width:11px;height:11px;border-radius:50%;background:var(--na);display:inline-block;flex:none;box-shadow:0 0 0 3px rgba(255,255,255,.15)}
+  .dot.rojo{background:#ff6b63}.dot.ambar{background:#ffcf5c}.dot.verde{background:#8ee3b0}
+  main{max-width:640px;margin:0 auto;padding:14px 12px 0}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);margin-bottom:12px;overflow:hidden}
+  .fold-head{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;background:none;border:0;cursor:pointer;padding:14px 16px;font:inherit;color:var(--ink);text-align:left}
+  .fold-head .ft{font-weight:600;font-size:15px}
+  .chev{transition:transform .2s ease;color:var(--ink-soft);flex:none}
+  .fold[aria-expanded="false"] .chev{transform:rotate(-90deg)}
+  .fold-body{padding:0 16px 14px}
+  .fold[aria-expanded="false"] + .fold-body{display:none}
+  .field{margin:10px 0}
+  .field label{display:block;font-size:12.5px;color:var(--ink-soft);margin-bottom:4px}
+  .field input{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:9px;font:inherit;color:var(--ink);background:#fbfdfc}
+  .field input:focus{outline:2px solid var(--brand);outline-offset:1px;border-color:var(--brand)}
+  .hint{font-size:12.5px;color:var(--ink-soft);background:#f5f8f7;border-left:3px solid var(--brand);border-radius:0 8px 8px 0;padding:10px 12px;margin:2px 0 0}
+  .sec-head{display:flex;align-items:center;gap:12px;width:100%;background:none;border:0;cursor:pointer;padding:14px 16px;font:inherit;color:var(--ink);text-align:left}
+  .sec-n{font-family:var(--serif);font-size:15px;font-weight:700;color:#fff;background:var(--brand);width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex:none}
+  .sec-t{flex:1;font-weight:600;font-size:15px;line-height:1.25}
+  .sec-count{font-size:12.5px;font-variant-numeric:tabular-nums;color:var(--ink-soft);background:var(--na-bg);border-radius:99px;padding:3px 9px;white-space:nowrap}
+  .sec-count.done{color:var(--ok);background:var(--ok-bg)}
+  .sec-body{padding:0 12px 6px;border-top:1px solid var(--line)}
+  .sec[aria-expanded="false"] + .sec-body{display:none}
+  .item{padding:14px 6px;border-bottom:1px solid #eef2f0}
+  .item:last-child{border-bottom:0}
+  .item-t{font-size:14.5px;line-height:1.5;margin:0 0 4px}
+  .rec-tag{display:inline-block;font-size:10.5px;font-weight:700;color:var(--warn);border:1px solid #e7d6a8;background:#fbf4df;border-radius:5px;padding:1px 6px;margin-right:6px;vertical-align:1px}
+  .fund{font-size:12px;color:var(--ink-soft);background:#f4f7f6;border-radius:8px;padding:7px 10px;margin:8px 0 6px}
+  .fund b{color:var(--brand-deep);font-weight:600}
+  .sanc{font-size:11.5px;color:var(--sanc-ink);background:var(--sanc-bg);border:1px solid var(--sanc-line);border-radius:8px;padding:7px 10px;margin:0 0 10px}
+  .sanc b{color:#8a6a08;font-weight:700}
+  .sanc.soft{color:var(--ink-soft);background:#f4f7f6;border-color:var(--line)}
+  .sanc.soft b{color:var(--brand-deep)}
+  .seg{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+  .seg button{font:inherit;font-size:13.5px;font-weight:600;cursor:pointer;padding:11px 6px;border-radius:10px;border:1.5px solid var(--line);background:#fbfdfc;color:var(--ink-soft);transition:transform .05s ease}
+  .seg button:active{transform:scale(.97)}
+  .seg button[aria-pressed="true"][data-v="ok"]{background:var(--ok);border-color:var(--ok);color:#fff}
+  .seg button[aria-pressed="true"][data-v="no"]{background:var(--no);border-color:var(--no);color:#fff}
+  .seg button[aria-pressed="true"][data-v="na"]{background:var(--na);border-color:var(--na);color:#fff}
+  .seg button:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+  /* Tabla de sanciones */
+  .reftab{width:100%;border-collapse:collapse;font-size:12.5px}
+  .reftab td{border-bottom:1px solid #eef2f0;padding:9px 6px;vertical-align:top}
+  .reftab tr:last-child td{border-bottom:0}
+  .reftab .u{white-space:nowrap;text-align:right;font-variant-numeric:tabular-nums;color:var(--sanc-ink);font-weight:600}
+  .reftab .p{font-size:11px;color:var(--ink-soft)}
+  .reftab .b{font-size:11px;color:var(--ink-soft);margin-top:2px}
+  .bottom{position:fixed;left:0;right:0;bottom:0;z-index:45;background:var(--surface);border-top:1px solid var(--line);box-shadow:0 -4px 18px rgba(18,33,31,.08);padding:10px 14px calc(10px + env(safe-area-inset-bottom,0));display:flex;align-items:center;gap:12px}
+  .b-metric{flex:1;min-width:0}
+  .b-label{font-size:11.5px;color:var(--ink-soft)}
+  .b-val{font-family:var(--serif);font-size:20px;font-weight:700;line-height:1.1;display:flex;align-items:baseline;gap:8px}
+  .b-val small{font-family:var(--sans);font-size:12px;font-weight:600;color:var(--ink-soft)}
+  .b-btn{font:inherit;font-weight:600;font-size:14px;color:#fff;background:var(--brand);border:0;border-radius:11px;padding:12px 16px;cursor:pointer;flex:none}
+  .b-btn:active{transform:scale(.98)}
+  .scrim{position:fixed;inset:0;background:rgba(12,24,22,.5);z-index:60;opacity:0;pointer-events:none;transition:opacity .2s ease}
+  .scrim.open{opacity:1;pointer-events:auto}
+  .sheet{position:fixed;left:0;right:0;bottom:0;z-index:61;background:var(--bg);border-radius:18px 18px 0 0;max-height:88vh;overflow-y:auto;transform:translateY(100%);transition:transform .28s cubic-bezier(.22,1,.36,1);padding-bottom:calc(20px + env(safe-area-inset-bottom,0))}
+  .sheet.open{transform:translateY(0)}
+  .grip{width:40px;height:4px;border-radius:99px;background:#c4cecb;margin:10px auto 4px}
+  .sheet h2{font-family:var(--serif);font-size:19px;margin:6px 16px 2px}
+  .sheet .sub{font-size:12.5px;color:var(--ink-soft);margin:0 16px 14px}
+  .score{background:var(--surface);border:1px solid var(--line);border-radius:14px;margin:0 12px 12px;padding:18px 16px;text-align:center}
+  .score .big{font-family:var(--serif);font-size:52px;font-weight:700;line-height:1;color:var(--brand-deep)}
+  .score .big.rojo{color:var(--no)}.score .big.ambar{color:var(--warn)}.score .big.verde{color:var(--ok)}
+  .score .cap{font-size:13px;color:var(--ink-soft);margin-top:4px}
+  .badge{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:600;border-radius:99px;padding:6px 14px;margin-top:12px}
+  .badge.rojo{background:var(--no-bg);color:var(--no)}
+  .badge.ambar{background:#fbf1da;color:var(--warn)}
+  .badge.verde{background:var(--ok-bg);color:var(--ok)}
+  .badge.neutro{background:var(--na-bg);color:var(--na)}
+  .expo{background:#fffaf0;border:1px solid var(--sanc-line);border-radius:14px;margin:0 12px 12px;padding:16px}
+  .expo .l{font-size:12px;color:var(--sanc-ink);font-weight:700;text-transform:none;margin-bottom:4px}
+  .expo .big{font-family:var(--serif);font-size:26px;font-weight:700;color:#8a6a08;line-height:1.1}
+  .expo .note{font-size:11.5px;color:var(--ink-soft);margin-top:8px}
+  .stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 12px 12px}
+  .stat{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+  .stat .n{font-family:var(--serif);font-size:24px;font-weight:700;line-height:1}
+  .stat .n.no{color:var(--no)}.stat .n.pend{color:var(--warn)}
+  .stat .l{font-size:12px;color:var(--ink-soft);margin-top:3px}
+  .breakdown{background:var(--surface);border:1px solid var(--line);border-radius:12px;margin:0 12px 12px;overflow:hidden}
+  .br-row{display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid #eef2f0;font-size:13.5px}
+  .br-row:last-child{border-bottom:0}
+  .br-row .bn{font-weight:600;flex:1}
+  .br-bar{width:64px;height:7px;border-radius:99px;background:#e7ecea;overflow:hidden;flex:none}
+  .br-bar i{display:block;height:100%;background:var(--ok);border-radius:99px}
+  .br-num{font-size:12px;font-variant-numeric:tabular-nums;color:var(--ink-soft);min-width:34px;text-align:right}
+  .find{background:var(--surface);border:1px solid var(--line);border-radius:12px;margin:0 12px 12px;padding:4px 0}
+  .find h3{font-size:13px;margin:12px 14px 8px;color:var(--ink)}
+  .find li{font-size:13px;line-height:1.45;margin:0 14px 11px 30px;position:relative;list-style:none}
+  .find li::before{content:"";position:absolute;left:-16px;top:6px;width:7px;height:7px;border-radius:50%}
+  .find li.no::before{background:var(--no)}
+  .find li.pend::before{background:var(--warn)}
+  .find li .s{display:block;color:var(--sanc-ink);font-size:11.5px;margin-top:2px;font-weight:600}
+  .find li small{display:block;color:var(--ink-soft);font-size:11.5px}
+  .actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:4px 12px 10px}
+  .actions .full{grid-column:1 / -1}
+  .act{font:inherit;font-weight:600;font-size:14px;padding:13px;border-radius:12px;cursor:pointer;border:1.5px solid var(--brand);background:var(--brand);color:#fff}
+  .act.ghost{background:var(--surface);color:var(--brand)}
+  .act.danger{background:var(--surface);color:var(--no);border-color:#e6c4c2}
+  .act:active{transform:scale(.99)}
+  .toast{position:fixed;left:50%;bottom:112px;transform:translateX(-50%) translateY(20px);z-index:80;background:var(--ink);color:#fff;font-size:13px;padding:11px 18px;border-radius:99px;opacity:0;transition:all .25s ease;pointer-events:none;box-shadow:0 6px 20px rgba(0,0,0,.25)}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .foot{max-width:640px;margin:0 auto;padding:2px 16px 18px;font-size:11.5px;color:var(--ink-soft)}
+  .foot p{margin:8px 0}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<header>
+  <p class="h-title">Auditoría de jornada · 40 horas</p>
+  <p class="h-sub">Marca cada punto conforme lo revisas. El avance, el cumplimiento y la exposición a multas se calculan al momento.</p>
+  <div class="prog-row">
+    <span id="dot" class="dot" aria-hidden="true"></span>
+    <div class="prog-track"><div id="progFill" class="prog-fill"></div></div>
+    <span id="progNum" class="prog-num">0 / 47</span>
+  </div>
+</header>
+
+<main>
+  <section class="card">
+    <button class="fold-head fold" aria-expanded="true" id="foldCentro">
+      <span class="ft">Datos del centro de trabajo</span>
+      <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+    <div class="fold-body" id="centroBody">
+      <div class="field"><label for="c_empresa">Empresa / razón social</label><input id="c_empresa" data-c="empresa" autocomplete="off"></div>
+      <div class="field"><label for="c_centro">Centro de trabajo</label><input id="c_centro" data-c="centro" autocomplete="off"></div>
+      <div class="field"><label for="c_pt">Personas trabajadoras</label><input id="c_pt" data-c="pt" inputmode="numeric" autocomplete="off"></div>
+      <div class="field"><label for="c_turnos">Turnos que operan</label><input id="c_turnos" data-c="turnos" autocomplete="off"></div>
+      <div class="field"><label for="c_resp">Responsable de la revisión</label><input id="c_resp" data-c="resp" autocomplete="off"></div>
+      <div class="field"><label for="c_fecha">Fecha</label><input id="c_fecha" data-c="fecha" type="date"></div>
+      <div class="field"><label for="c_uma">Valor diario de la UMA (pesos)</label><input id="c_uma" data-c="uma" inputmode="decimal" autocomplete="off" placeholder="117.31"></div>
+      <div class="field"><label for="c_afect">Trabajadores afectados (para proyectar la multa)</label><input id="c_afect" data-c="afect" inputmode="numeric" autocomplete="off" placeholder="1"></div>
+      <p class="hint">Marca un punto como <b>Cumple</b> solo cuando exista evidencia documental que lo respalde. La UMA se actualiza cada 1 de febrero; en 2026 es de <b>$117.31</b> diarios. Las multas se calculan con la UMA vigente al cometerse la infracción, por cada trabajador afectado, y se duplican en reincidencia (art.&nbsp;992 LFT).</p>
+    </div>
+  </section>
+
+  <div id="secs"></div>
+
+  <section class="card">
+    <button class="fold-head fold" aria-expanded="false" id="foldRef">
+      <span class="ft">Referencia de sanciones (LFT)</span>
+      <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+    <div class="fold-body" id="refBody"><table class="reftab" id="refTab"></table></div>
+  </section>
+</main>
+
+<div class="foot">
+  <p><b>Fechas clave.</b> 1 may–31 dic 2026: periodo para ajustar procesos (Transitorio Tercero). 1 ene 2027: entran en vigor las disposiciones de la STPS sobre registro electrónico (Transitorio Quinto) y aplica el primer recorte, a 46 h semanales (Transitorio Segundo). 1 feb de cada año: se actualiza la UMA, base de las multas (art.&nbsp;992 LFT); en 2026 es de $117.31 diarios.</p>
+  <p><b>Fuentes.</b> Decreto de reforma al art. 123 constitucional, DOF 03-mar-2026. Decreto de reforma a la LFT en materia de reducción de la jornada, DOF 01-may-2026. Ley Federal del Trabajo vigente, arts. 992, 994 y 995 (sanciones). NOM-019-STPS-2011, NOM-030-STPS-2009, NOM-035-STPS-2018, NOM-036-1-STPS-2018 y NOM-037-STPS-2023. Valor de la UMA 2026 (INEGI).</p>
+  <p>Material de capacitación; no constituye asesoría jurídica individualizada. Los rangos de multa son orientativos: la autoridad determina el monto final conforme al art. 992 LFT. Cada caso debe validarse contra la LFT vigente y las circunstancias del centro de trabajo.</p>
+  <p>Ing. Carlos Eduardo Roa Sánchez · Servicio Integral de Consultoría en SST · Agente Capacitador Externo STPS · Céd. Prof. 13165676.</p>
+</div>
+
+<div class="bottom">
+  <div class="b-metric">
+    <div class="b-label">Cumplimiento legal</div>
+    <div class="b-val"><span id="bCumpl">—</span><small id="bHall"></small></div>
+  </div>
+  <button class="b-btn" id="openSheet">Ver resultado</button>
+</div>
+
+<div class="scrim" id="scrim"></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-label="Resultado de la auditoría">
+  <div class="grip"></div>
+  <h2 id="sTitle">Resultado</h2>
+  <p class="sub" id="sSub"></p>
+
+  <div class="score">
+    <div class="big" id="scBig">—</div>
+    <div class="cap">de cumplimiento en los puntos ya evaluados (excluye recomendaciones y «no aplica»)</div>
+    <div class="badge neutro" id="scBadge"><span class="dot" style="box-shadow:none"></span><span id="scBadgeT">Sin iniciar</span></div>
+  </div>
+
+  <div class="expo" id="expoCard" style="display:none">
+    <div class="l">Exposición estimada a multas</div>
+    <div class="big" id="expoVal">—</div>
+    <div class="note" id="expoNote"></div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="n" id="stResp">0</div><div class="l">Respondidos de 47</div></div>
+    <div class="stat"><div class="n pend" id="stPend">47</div><div class="l">Pendientes</div></div>
+    <div class="stat"><div class="n no" id="stHall">0</div><div class="l">Hallazgos (no cumple)</div></div>
+    <div class="stat"><div class="n" id="stRec">0 / 5</div><div class="l">Recomendaciones logradas</div></div>
+  </div>
+
+  <div class="breakdown" id="breakdown"></div>
+  <div class="find" id="findings"></div>
+
+  <div class="actions">
+    <button class="act" id="shareBtn">Compartir resumen</button>
+    <button class="act ghost" id="reportBtn">Descargar reporte</button>
+    <button class="act danger full" id="resetBtn">Reiniciar checklist</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ====== Contenido transcrito del checklist (literal) ====== */
+const DATA = [
+ {n:1, titulo:'Marco aplicable y calendario', items:[
+   {t:`Se identificó el máximo semanal aplicable al año en curso: 48 h en 2026, 46 en 2027, 44 en 2028, 42 en 2029 y 40 en 2030.`, f:`Art. 123, Apartado A, fr. IV, CPEUM; art. 59 LFT; Transitorio Segundo del decreto, DOF 01-may-2026`},
+   {t:`Existe inventario de horas efectivas trabajadas por puesto y por turno.`, f:`Base para acreditar el cumplimiento de los arts. 58, 59 y 61 LFT`},
+   {t:`Se identificaron los puestos que hoy rebasan el máximo semanal del año en curso.`, f:`Arts. 59 y 61 LFT`},
+   {t:`Se tomó en cuenta que, con el tope de 8 h diarias, cinco días equivalen a 40 h ordinarias: 46, 44 y 42 h requieren seis días de trabajo.`, f:`Arts. 59 y 61 LFT`},
+   {t:`Si la empresa se adelantó voluntariamente a 40 h, se documentó que no habrá regreso a jornadas mayores.`, f:`Arts. 56 y 57 LFT; Transitorio Séptimo del decreto`},
+ ]},
+ {n:2, titulo:'Jornada diaria y distribución', items:[
+   {t:`Ningún puesto rebasa 8 h en jornada diurna, 7 h en nocturna o 7.5 h en mixta.`, f:`Art. 61 LFT`},
+   {t:`La distribución semanal de la jornada está pactada de común acuerdo y documentada.`, f:`Art. 58, segundo párrafo, LFT`},
+   {t:`No se pactaron jornadas ordinarias de 10 o 12 horas; lo que excede el tope diario se trata como tiempo extraordinario.`, f:`Arts. 5 fr. III, 61 y 68 LFT`},
+   {t:`Se otorga al menos un día de descanso con goce de salario íntegro por cada seis días de trabajo.`, f:`Art. 69 LFT; art. 123, Apartado A, fr. IV, CPEUM`},
+   {t:`Se respeta el descanso durante la jornada continua; si la persona no puede salir del centro de trabajo, ese tiempo se computa como jornada.`, f:`Arts. 63 y 64 LFT`},
+   {t:`Quien labora en domingo recibe la prima dominical de al menos 25 %.`, f:`Art. 71, segundo párrafo, LFT`},
+ ]},
+ {n:3, titulo:'Tiempo extraordinario', items:[
+   {t:`El tiempo extra no rebasa el tope semanal del año: 9 h en 2026 y 2027, 10 h en 2028, 11 h en 2029 y 12 h en 2030.`, f:`Art. 66 LFT; Transitorio Cuarto del decreto, DOF 01-may-2026`},
+   {t:`El tiempo extra se distribuye en un máximo de 4 horas diarias y 4 días por semana, sin rebasar el tope semanal.`, f:`Art. 66 LFT`},
+   {t:`Las horas dentro del tope se pagan con 100 % adicional.`, f:`Art. 66 LFT`},
+   {t:`El excedente del tope no rebasa 4 horas a la semana y se paga con 200 % adicional.`, f:`Art. 68, segundo párrafo, LFT`},
+   {t:`La suma de jornada ordinaria y extraordinaria no rebasa 12 horas al día.`, f:`Art. 68, tercer párrafo, LFT`},
+   {t:`No se ordena tiempo extraordinario a personas menores de 18 años.`, f:`Art. 178 LFT; art. 123, Apartado A, fr. XI, CPEUM`},
+   {t:`Cada hora extra cuenta con autorización previa documentada. (Recomendación de control.)`, f:`Soporte probatorio: arts. 784, 804 y 805 LFT`, rec:true},
+   {t:`El tiempo extra no se usa como parte fija y permanente del turno.`, f:`Art. 66 LFT: procede por circunstancias extraordinarias`},
+ ]},
+ {n:4, titulo:'Salario y nómina', items:[
+   {t:`No se redujeron sueldos, salarios ni prestaciones a causa de la reducción de la jornada.`, f:`Transitorio Séptimo del decreto (DOF 01-may-2026); Transitorio Cuarto del decreto constitucional (DOF 03-mar-2026)`},
+   {t:`Se recalculó el costo-hora sin modificar el salario diario. (Medida de gestión, no obligación legal.)`, f:`Consecuencia de los arts. 59 y 82 LFT`, rec:true},
+   {t:`La nómina distingue hora ordinaria, hora doble y hora triple.`, f:`Arts. 66 y 68 LFT`},
+   {t:`Se conserva el pago del día de descanso semanal con salario íntegro.`, f:`Art. 69 LFT`},
+ ]},
+ {n:5, titulo:'Documentación laboral', items:[
+   {t:`Los contratos individuales indican la duración de la jornada y están actualizados o con adenda.`, f:`Art. 25 fr. IV LFT; arts. 56 y 57 LFT`},
+   {t:`El contrato colectivo, si existe, está revisado en lo relativo a jornadas de trabajo.`, f:`Art. 391 fr. VI LFT`},
+   {t:`El Reglamento Interior de Trabajo señala las horas de entrada y salida y está actualizado.`, f:`Arts. 422 y 423 fr. III LFT`},
+   {t:`El RIT actualizado se depositó ante el Centro Federal de Conciliación y Registro Laboral.`, f:`Arts. 424 y 425 LFT`},
+   {t:`Las políticas internas de horario, descansos y autorización de horas extra están actualizadas.`, f:`Consistencia con arts. 58, 61, 66 y 68 LFT`},
+   {t:`Existe evidencia del consentimiento expreso en los esquemas de jornada comprimida.`, f:`Art. 58, segundo párrafo, LFT`},
+ ]},
+ {n:6, titulo:'Registro electrónico de jornada', items:[
+   {t:`Se registra de manera electrónica el horario de inicio y finalización de la jornada de cada persona trabajadora.`, f:`Art. 132 fr. XXXIV LFT`},
+   {t:`El registro puede proporcionarse a la autoridad laboral cuando lo requiera.`, f:`Art. 132 fr. XXXIV LFT`},
+   {t:`El registro se conserva y puede exhibirse en juicio o inspección.`, f:`Art. 804 LFT`},
+   {t:`Está documentado el acuerdo con la persona trabajadora sobre el registro, para que haga prueba plena.`, f:`Art. 132 fr. XXXIV, párrafo tercero, LFT`},
+   {t:`El sistema no permite editar sin dejar rastro y conserva bitácora de auditoría. (Recomendación de defensibilidad.)`, f:`Complemento de los arts. 784, 804 y 805 LFT`, rec:true},
+   {t:`Se da seguimiento a las disposiciones de carácter general de la STPS, que entran en vigor el 1 de enero de 2027 y definirán ámbito de aplicación y excepciones.`, f:`Art. 132 fr. XXXIV, párrafo segundo, LFT; Transitorio Quinto del decreto`},
+   {t:`La dirección conoce la sanción por incumplir esta obligación: 250 a 5,000 UMA, por cada trabajador afectado y con duplicación en reincidencia.`, f:`Art. 994 fr. IV Bis y art. 992 LFT`},
+ ]},
+ {n:7, titulo:'Seguridad y salud en el trabajo', items:[
+   {t:`Se determinó, conforme a la norma y a la magnitud del cambio, si procede actualizar o reevaluar los factores de riesgo psicosocial tras el rediseño de turnos.`, f:`NOM-035-STPS-2018`},
+   {t:`En puestos con manejo manual de cargas se revisó la exposición, considerando que los límites de masa acumulada están expresados por jornada de 8 horas y no se amplían por alargar el turno.`, f:`NOM-036-1-STPS-2018 (10,000 kg/jornada de 8 h hasta 10 m; 6,000 kg/jornada de 8 h hasta 20 m)`},
+   {t:`Se recalcularon pausas y periodos de descanso y de recuperación en los esquemas comprimidos.`, f:`NOM-036-1-STPS-2018, Capítulos 7 y 8`},
+   {t:`El diagnóstico de condiciones de seguridad y el programa o la relación de medidas preventivas se actualizaron con la nueva jornada.`, f:`NOM-030-STPS-2009`},
+   {t:`La Comisión de Seguridad e Higiene fue notificada del rediseño y tiene programado y documentado su recorrido de verificación.`, f:`Arts. 509 y 510 LFT; NOM-019-STPS-2011 (periodicidad cuando menos trimestral)`},
+   {t:`Si hay personal en teletrabajo, su registro de jornada se atiende conforme a la norma aplicable.`, f:`NOM-037-STPS-2023, Teletrabajo`},
+ ]},
+ {n:8, titulo:'Comisiones, comunicación y cierre', items:[
+   {t:`La Comisión Mixta de Capacitación, Adiestramiento y Productividad fue informada del rediseño y se programó la capacitación del cambio.`, f:`Art. 153-E LFT (empresas con más de 50 personas trabajadoras)`},
+   {t:`Se ejecutó el plan de comunicación del cambio de jornada al personal.`, f:`Buena práctica de gestión del cambio`, rec:true},
+   {t:`Se auditó la coherencia entre el horario documentado y el realmente trabajado.`, f:`Arts. 784 y 805 LFT`},
+   {t:`Se realizó un simulacro de inspección cruzando entrevistas, nómina y registros de asistencia. (Recomendación.)`, f:`Reglamento General de Inspección del Trabajo y Aplicación de Sanciones`, rec:true},
+   {t:`El expediente probatorio está integrado y disponible ante una inspección de la STPS.`, f:`Arts. 540 y 541 LFT; arts. 804 y 805 LFT`},
+ ]},
+];
+
+/* ====== Sanciones (LFT, texto vigente) ======
+   Rangos en UMA. Tipo 'multa' entra en la exposición estimada; 'nota' no. */
+const SANC = {
+  0:{tipo:'multa', frac:'Art. 994, fr. I, LFT', base:'jornada máxima y descanso semanal (arts. 61 y 69)', uma:[50,250]},
+  1:{tipo:'multa', frac:'Art. 994, fr. I, LFT', base:'jornada, descanso y prima dominical (arts. 61, 69 y 71)', uma:[50,250]},
+  2:{tipo:'multa', frac:'Art. 994, fr. I, LFT', base:'jornada diaria (art. 61)', uma:[50,250], nota:'Rebasar la jornada diaria cae en la fr. I. El pago incorrecto de horas extra (arts. 66 y 68) no tiene multa fija en el art. 994: se reclama como diferencias salariales.'},
+  3:{tipo:'nota', frac:'Transitorio Séptimo del decreto', base:'protección salarial', texto:'Reducir sueldos, salarios o prestaciones por la reforma es nulo de pleno derecho: implica pago retroactivo y posible demanda, no una multa fija. Los errores de nómina en horas extra se reclaman como diferencias salariales.'},
+  4:{tipo:'multa', frac:'Art. 994, fr. III, LFT', base:'obligaciones documentales del art. 132', uma:[50,1500], nota:'El RIT y su depósito ante el CFCRL (arts. 422–425) se verifican en inspección.'},
+  5:{tipo:'multa', frac:'Art. 994, fr. IV Bis, LFT', base:'registro electrónico de jornada (art. 132, fr. XXXIV)', uma:[250,5000]},
+  6:{tipo:'multa', frac:'Art. 994, fr. V, LFT', base:'seguridad e higiene y prevención de riesgos', uma:[250,5000]},
+  7:{tipo:'nota', frac:'Arts. 784, 804 y 805 LFT', base:'carga de la prueba', texto:'Estos puntos son de defensibilidad probatoria: su ausencia no es una multa directa, pero debilita al patrón ante inspección o juicio. La falta de integración de la comisión mixta puede sancionarse por la vía de inspección.'},
+};
+/* Excepción a nivel de punto: horas extra a menores → art. 995 */
+const OVERRIDE = { '2-5': {tipo:'multa', frac:'Art. 995 LFT', base:'normas de trabajo de menores (horas extra a menores)', uma:[50,2500]} };
+
+/* Tabla de referencia (id único por fracción para no duplicar en la suma) */
+const REF = [
+  {id:'I',    concepto:'Jornada máxima diaria y descanso semanal', base:'Arts. 61 y 69 · Art. 994, fr. I', uma:[50,250]},
+  {id:'III',  concepto:'Obligaciones documentales del patrón', base:'Art. 132 · Art. 994, fr. III', uma:[50,1500]},
+  {id:'IVbis',concepto:'Registro electrónico de jornada', base:'Art. 132, fr. XXXIV · Art. 994, fr. IV Bis', uma:[250,5000]},
+  {id:'V',    concepto:'Seguridad e higiene y prevención de riesgos', base:'Art. 994, fr. V', uma:[250,5000]},
+  {id:'995',  concepto:'Horas extra a personas menores de edad', base:'Art. 995', uma:[50,2500]},
+];
+/* id canónico por fracción, para deduplicar la exposición */
+function sancId(s){ if(s.frac.indexOf('IV Bis')>=0)return 'IVbis'; if(s.frac.indexOf('995')>=0)return '995'; if(/fr\. V\b/.test(s.frac))return 'V'; if(/fr\. III\b/.test(s.frac))return 'III'; if(/fr\. I\b/.test(s.frac))return 'I'; return s.frac; }
+
+const CENTRO_FIELDS = [['empresa'],['centro'],['pt'],['turnos'],['resp'],['fecha'],['uma'],['afect']];
+const KEY = 'auditoria40h_v2';
+const TOTAL = DATA.reduce((a,s)=>a+s.items.length,0);
+const UMA_DEF = 117.31;
+
+let state = {items:{}, centro:{}};
+try{ const raw = localStorage.getItem(KEY); if(raw) state = Object.assign(state, JSON.parse(raw)); }catch(e){}
+
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){} }
+const key = (s,i)=> s+'-'+i;
+const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+function uma(){ const v=parseFloat(state.centro.uma); return (isFinite(v)&&v>0)? v : UMA_DEF; }
+const fmt = new Intl.NumberFormat('es-MX',{style:'currency',currency:'MXN',maximumFractionDigits:0});
+const pesos = u => fmt.format(Math.round(u*uma()));
+function sancFor(si,ii){ const o=OVERRIDE[key(si,ii)]; if(o)return o; return SANC[si]; }
+function afectados(){ const v=parseInt(state.centro.afect,10); return (isFinite(v)&&v>0)?v:1; }
+
+/* ====== Render de secciones ====== */
+const secsEl = document.getElementById('secs');
+DATA.forEach((sec, si)=>{
+  const card = document.createElement('section'); card.className='card';
+  const open = si===0;
+  card.innerHTML = `
+    <button class="sec-head sec" aria-expanded="${open}" data-si="${si}">
+      <span class="sec-n">${sec.n}</span>
+      <span class="sec-t">${esc(sec.titulo)}</span>
+      <span class="sec-count" id="cnt-${si}">0/${sec.items.length}</span>
+      <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+    <div class="sec-body">
+      ${sec.items.map((it,ii)=>`
+        <div class="item">
+          <p class="item-t">${it.rec?'<span class="rec-tag">RECOMENDACIÓN</span>':''}${esc(it.t)}</p>
+          <div class="fund"><b>Fundamento:</b> ${esc(it.f)}</div>
+          <div class="sanc-slot" data-si="${si}" data-ii="${ii}"></div>
+          <div class="seg" role="group" aria-label="Estado del punto">
+            <button data-v="ok" data-si="${si}" data-ii="${ii}" aria-pressed="false">Cumple</button>
+            <button data-v="no" data-si="${si}" data-ii="${ii}" aria-pressed="false">No cumple</button>
+            <button data-v="na" data-si="${si}" data-ii="${ii}" aria-pressed="false">No aplica</button>
+          </div>
+        </div>`).join('')}
+    </div>`;
+  secsEl.appendChild(card);
+});
+
+/* Chip de sanción por punto */
+function chipHTML(si,ii){
+  const it = DATA[si].items[ii];
+  if(it.rec) return `<div class="sanc soft"><b>Sin multa directa</b> · es una recomendación de defensibilidad.</div>`;
+  const s = sancFor(si,ii);
+  if(s.tipo==='nota') return `<div class="sanc soft"><b>Exposición:</b> ${esc(s.texto)}</div>`;
+  return `<div class="sanc"><b>Multa si no cumple:</b> ${esc(s.frac)} · ${s.uma[0]}–${s.uma[1]} UMA (≈ ${pesos(s.uma[0])}–${pesos(s.uma[1])})</div>`;
+}
+function renderChips(){ document.querySelectorAll('.sanc-slot').forEach(el=>{ el.innerHTML = chipHTML(+el.dataset.si, +el.dataset.ii); }); }
+
+/* Tabla de referencia */
+function renderRef(){
+  document.getElementById('refTab').innerHTML = REF.map(r=>`
+    <tr><td>${esc(r.concepto)}<div class="b">${esc(r.base)}</div></td>
+    <td class="u">${r.uma[0]}–${r.uma[1]} UMA<div class="p">${pesos(r.uma[0])}–${pesos(r.uma[1])}</div></td></tr>`).join('')
+    + `<tr><td>Reincidencia y por trabajador<div class="b">Art. 992 LFT</div></td><td class="u">×2<div class="p">por cada trabajador afectado</div></td></tr>`;
+}
+
+/* ====== Interacción ====== */
+document.querySelectorAll('.sec-head').forEach(b=> b.addEventListener('click', ()=> b.setAttribute('aria-expanded', b.getAttribute('aria-expanded')!=='true')));
+['foldCentro','foldRef'].forEach(id=>{ const b=document.getElementById(id); b.addEventListener('click', ()=> b.setAttribute('aria-expanded', b.getAttribute('aria-expanded')!=='true')); });
+
+secsEl.addEventListener('click', e=>{
+  const btn = e.target.closest('.seg button'); if(!btn) return;
+  const si=+btn.dataset.si, ii=+btn.dataset.ii, v=btn.dataset.v, k=key(si,ii);
+  state.items[k] = (state.items[k]===v) ? null : v;
+  save(); paintItem(si,ii); recompute();
+});
+function paintItem(si,ii){
+  const cur = state.items[key(si,ii)];
+  document.querySelectorAll(`.seg button[data-si="${si}"][data-ii="${ii}"]`).forEach(b=> b.setAttribute('aria-pressed', b.dataset.v===cur?'true':'false'));
+}
+
+CENTRO_FIELDS.forEach(([id])=>{
+  const el = document.querySelector(`input[data-c="${id}"]`);
+  if(state.centro[id]) el.value = state.centro[id];
+  el.addEventListener('input', ()=>{ state.centro[id]=el.value; save(); if(id==='uma'){ renderChips(); renderRef(); recompute(); } else if(id==='afect'){ recompute(); } });
+});
+
+/* ====== Cálculo ====== */
+function metrics(){
+  let resp=0, legalOk=0, legalNo=0, legalTotal=0, recOk=0, recTotal=0;
+  const perSec = DATA.map(s=>({ok:0,done:0,total:s.items.length}));
+  const hallazgos=[], pendientes=[];
+  const expoMap = {}; // id -> [min,max] UMA (deduplicado)
+  DATA.forEach((s,si)=> s.items.forEach((it,ii)=>{
+    const v = state.items[key(si,ii)] || null;
+    if(v){ resp++; perSec[si].done++; if(v==='ok') perSec[si].ok++; }
+    if(it.rec){ recTotal++; if(v==='ok')recOk++; }
+    else{
+      legalTotal++;
+      if(v==='ok')legalOk++;
+      else if(v==='no'){
+        legalNo++;
+        const sc = sancFor(si,ii);
+        hallazgos.push({t:it.t, sc});
+        if(sc.tipo==='multa'){ const id=sancId(sc); if(!expoMap[id]) expoMap[id]=sc.uma.slice(); }
+      }
+    }
+    if(!v && !it.rec) pendientes.push({t:it.t});
+  }));
+  let eMin=0,eMax=0; Object.values(expoMap).forEach(r=>{ eMin+=r[0]; eMax+=r[1]; });
+  const evalLegal = legalOk+legalNo;
+  const cumpl = evalLegal>0 ? Math.round(legalOk/evalLegal*100) : null;
+  let estado='neutro', etiqueta='Sin iniciar';
+  if(resp>0){
+    if(legalNo>0){ estado='rojo'; etiqueta='Con hallazgos'; }
+    else if(pendientes.length>0){ estado='ambar'; etiqueta='En progreso'; }
+    else { estado='verde'; etiqueta='Sin hallazgos'; }
+  }
+  return {resp,legalNo,recOk,recTotal,perSec,hallazgos,pendientes,cumpl,estado,etiqueta,eMin,eMax,hasExpo:Object.keys(expoMap).length>0};
+}
+
+function recompute(){
+  const m = metrics();
+  const pct = Math.round(m.resp/TOTAL*100);
+  document.getElementById('progFill').style.width = pct+'%';
+  document.getElementById('progNum').textContent = m.resp+' / '+TOTAL;
+  document.getElementById('dot').className='dot '+(m.estado==='neutro'?'':m.estado);
+  m.perSec.forEach((p,si)=>{ const el=document.getElementById('cnt-'+si); el.textContent=p.done+'/'+p.total; el.classList.toggle('done', p.done===p.total); });
+  document.getElementById('bCumpl').textContent = m.cumpl===null ? '—' : m.cumpl+'%';
+  document.getElementById('bHall').textContent = m.legalNo>0 ? (m.legalNo+' hallazgo'+(m.legalNo>1?'s':'')) : '';
+  const big=document.getElementById('scBig'); big.textContent = m.cumpl===null?'—':m.cumpl+'%'; big.className='big '+(m.estado==='neutro'?'':m.estado);
+  document.getElementById('scBadge').className='badge '+m.estado;
+  document.getElementById('scBadgeT').textContent=m.etiqueta;
+  document.getElementById('stResp').textContent=m.resp;
+  document.getElementById('stPend').textContent=(TOTAL-m.resp);
+  document.getElementById('stHall').textContent=m.legalNo;
+  document.getElementById('stRec').textContent=m.recOk+' / '+m.recTotal;
+  document.getElementById('sSub').textContent=(state.centro.empresa?state.centro.empresa+' · ':'')+(state.centro.fecha?fechaLarga(state.centro.fecha):'');
+  // exposición
+  const ec=document.getElementById('expoCard');
+  if(m.hasExpo){
+    ec.style.display='block';
+    const N=afectados();
+    let html = pesos(m.eMin)+' – '+pesos(m.eMax);
+    let note = 'Rango por infracción, un trabajador ('+m.eMin+'–'+m.eMax+' UMA).';
+    if(N>1){ html += '<div style="font-size:15px;font-weight:700;color:#8a6a08;margin-top:6px">× '+N+' afectados: '+pesos(m.eMin*N)+' – '+pesos(m.eMax*N)+'</div>'; note += ' Proyección multiplicada por los '+N+' trabajadores que marcaste como afectados.'; }
+    note += ' La multa por trabajador aplica solo a infracciones que causan daño directo y evaluable, a criterio de la autoridad (no equivale a multiplicar por toda la plantilla). Se duplica en reincidencia (art. 992 LFT).';
+    document.getElementById('expoVal').innerHTML=html;
+    document.getElementById('expoNote').textContent=note;
+  } else ec.style.display='none';
+  // desglose
+  document.getElementById('breakdown').innerHTML = m.perSec.map((p,si)=>{
+    const pc=p.total?Math.round(p.done/p.total*100):0;
+    return `<div class="br-row"><span class="sec-n" style="width:24px;height:24px;font-size:12px">${DATA[si].n}</span><span class="bn">${esc(DATA[si].titulo)}</span><span class="br-bar"><i style="width:${pc}%"></i></span><span class="br-num">${p.done}/${p.total}</span></div>`;
+  }).join('');
+  // hallazgos y pendientes
+  let fh='';
+  if(m.hallazgos.length){
+    fh += `<h3>Hallazgos — puntos marcados «No cumple» (${m.hallazgos.length})</h3><ul>`;
+    fh += m.hallazgos.map(h=>{
+      let s;
+      if(h.sc.tipo==='multa') s=`Multa: ${esc(h.sc.frac)} · ${h.sc.uma[0]}–${h.sc.uma[1]} UMA (≈ ${pesos(h.sc.uma[0])}–${pesos(h.sc.uma[1])})`;
+      else s=esc(h.sc.texto||h.sc.frac);
+      return `<li class="no">${esc(h.t)}<span class="s">${s}</span></li>`;
+    }).join('') + `</ul>`;
+  }
+  if(m.pendientes.length){
+    fh += `<h3>Pendientes por revisar (${m.pendientes.length})</h3><ul>`;
+    fh += m.pendientes.slice(0,40).map(p=>`<li class="pend">${esc(p.t)}</li>`).join('') + `</ul>`;
+  }
+  if(!fh) fh = `<h3>Sin hallazgos ni pendientes</h3><p style="font-size:13px;color:var(--ink-soft);margin:0 14px 12px">Todos los requisitos legales fueron evaluados y ninguno quedó marcado como «No cumple».</p>`;
+  document.getElementById('findings').innerHTML = fh;
+  return m;
+}
+function fechaLarga(iso){ try{ return new Date(iso+'T00:00:00').toLocaleDateString('es-MX',{day:'numeric',month:'long',year:'numeric'}); }catch(e){ return iso; } }
+
+/* ====== Sheet ====== */
+const scrim=document.getElementById('scrim'), sheet=document.getElementById('sheet');
+document.getElementById('openSheet').addEventListener('click', ()=>{ recompute(); scrim.classList.add('open'); sheet.classList.add('open'); });
+function closeSheet(){ scrim.classList.remove('open'); sheet.classList.remove('open'); }
+scrim.addEventListener('click', closeSheet);
+
+/* ====== Compartir ====== */
+function resumenTexto(m){
+  const L=[];
+  L.push('AUDITORÍA DE JORNADA · 40 HORAS');
+  if(state.centro.empresa) L.push('Empresa: '+state.centro.empresa);
+  if(state.centro.centro) L.push('Centro: '+state.centro.centro);
+  if(state.centro.resp) L.push('Responsable: '+state.centro.resp);
+  L.push('Fecha: '+(state.centro.fecha?fechaLarga(state.centro.fecha):new Date().toLocaleDateString('es-MX')));
+  L.push('');
+  L.push('Avance: '+m.resp+'/'+TOTAL+' ('+Math.round(m.resp/TOTAL*100)+'%)');
+  L.push('Cumplimiento legal: '+(m.cumpl===null?'sin evaluar':m.cumpl+'%')+' — '+m.etiqueta);
+  L.push('Hallazgos (no cumple): '+m.legalNo);
+  L.push('Pendientes: '+(TOTAL-m.resp));
+  if(m.hasExpo){
+    const N=afectados();
+    L.push('Exposición por infracción (1 trabajador): '+pesos(m.eMin)+' – '+pesos(m.eMax));
+    if(N>1) L.push('Proyección × '+N+' afectados: '+pesos(m.eMin*N)+' – '+pesos(m.eMax*N));
+    L.push('(Aplica por trabajador con daño directo; se duplica en reincidencia, art. 992 LFT.)');
+  }
+  L.push('');
+  L.push('Checklist del Ing. Carlos E. Roa Sánchez · Consultoría en SST · ACE STPS.');
+  return L.join('\n');
+}
+document.getElementById('shareBtn').addEventListener('click', async ()=>{
+  const txt = resumenTexto(metrics());
+  if(navigator.share){ try{ await navigator.share({title:'Auditoría de jornada 40 h', text:txt}); return; }catch(e){ if(e.name==='AbortError') return; } }
+  try{ await navigator.clipboard.writeText(txt); toast('Resumen copiado al portapapeles'); }
+  catch(e){ alert(txt); }
+});
+
+/* ====== Reporte descargable ====== */
+document.getElementById('reportBtn').addEventListener('click', ()=>{
+  const m = metrics();
+  const filas = DATA.map((s,si)=>{
+    const its = s.items.map((it,ii)=>{
+      const v = state.items[key(si,ii)] || null;
+      const est = v==='ok'?'Cumple':v==='no'?'No cumple':v==='na'?'No aplica':'—';
+      const cls = v==='ok'?'ok':v==='no'?'no':v==='na'?'na':'pe';
+      let sTxt='';
+      if(!it.rec){ const sc=sancFor(si,ii); sTxt = sc.tipo==='multa' ? `<div class="s">Multa: ${esc(sc.frac)} · ${sc.uma[0]}–${sc.uma[1]} UMA (${pesos(sc.uma[0])}–${pesos(sc.uma[1])})</div>` : `<div class="s">${esc(sc.texto||sc.frac)}</div>`; }
+      return `<tr><td class="e ${cls}">${est}</td><td>${esc(it.t)}${it.rec?' <em>(recomendación)</em>':''}<div class="f">${esc(it.f)}</div>${sTxt}</td></tr>`;
+    }).join('');
+    return `<h3>${s.n}. ${esc(s.titulo)}</h3><table>${its}</table>`;
+  }).join('');
+  const refRows = REF.map(r=>`<tr><td>${esc(r.concepto)}<div class="f">${esc(r.base)}</div></td><td class="u">${r.uma[0]}–${r.uma[1]} UMA<div class="f">${pesos(r.uma[0])}–${pesos(r.uma[1])}</div></td></tr>`).join('')
+    + `<tr><td>Reincidencia y por trabajador<div class="f">Art. 992 LFT</div></td><td class="u">×2 · por trabajador afectado</td></tr>`;
+  const rep = `<!DOCTYPE html><html lang="es-MX"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Reporte de auditoría de jornada</title>
+  <style>body{font-family:Georgia,serif;color:#12211f;max-width:820px;margin:24px auto;padding:0 20px;line-height:1.5}
+  h1{font-size:22px;margin:0 0 2px}.meta{font-family:Arial,sans-serif;font-size:13px;color:#3d4f4b;margin:0 0 16px}
+  .box{border:1px solid #d6dedb;border-radius:10px;padding:14px 16px;margin:14px 0;font-family:Arial,sans-serif;font-size:14px}
+  .box b{color:#0a4f47}.k{display:inline-block;min-width:220px}
+  .expo{border:1px solid #f0e2b8;background:#fffaf0;border-radius:10px;padding:14px 16px;margin:14px 0;font-family:Arial,sans-serif}
+  .expo .big{font-size:20px;font-weight:700;color:#8a6a08}
+  h3{font-family:Arial,sans-serif;font-size:15px;background:#0e6e63;color:#fff;padding:7px 10px;border-radius:7px;margin:20px 0 6px}
+  table{width:100%;border-collapse:collapse;font-family:Arial,sans-serif;font-size:13px}
+  td{border-bottom:1px solid #eef2f0;padding:8px 8px;vertical-align:top}
+  td.e{white-space:nowrap;font-weight:700;width:92px}.e.ok{color:#157f52}.e.no{color:#be3a34}.e.na{color:#6f7a86}.e.pe{color:#a9760a}
+  td.u{white-space:nowrap;text-align:right;font-weight:700;color:#8a6a08}
+  .f{color:#3d4f4b;font-size:11.5px;margin-top:3px}.s{color:#8a6a08;font-size:11.5px;margin-top:3px;font-weight:700}
+  em{color:#a9760a;font-style:normal;font-size:11px}
+  .foot{font-family:Arial,sans-serif;font-size:11px;color:#3d4f4b;margin-top:22px;border-top:1px solid #d6dedb;padding-top:10px}
+  @media print{body{margin:0}h3,td.e,.expo{-webkit-print-color-adjust:exact;print-color-adjust:exact}}</style></head><body>
+  <h1>Reporte de auditoría de jornada · 40 horas</h1>
+  <p class="meta">Generado el ${new Date().toLocaleDateString('es-MX',{day:'numeric',month:'long',year:'numeric'})} · UMA aplicada: ${fmt.format(uma())} diarios</p>
+  <div class="box">
+    <div><span class="k"><b>Empresa / razón social:</b></span> ${esc(state.centro.empresa||'—')}</div>
+    <div><span class="k"><b>Centro de trabajo:</b></span> ${esc(state.centro.centro||'—')}</div>
+    <div><span class="k"><b>Personas trabajadoras:</b></span> ${esc(state.centro.pt||'—')}</div>
+    <div><span class="k"><b>Turnos:</b></span> ${esc(state.centro.turnos||'—')}</div>
+    <div><span class="k"><b>Responsable de la revisión:</b></span> ${esc(state.centro.resp||'—')}</div>
+    <div><span class="k"><b>Fecha:</b></span> ${state.centro.fecha?fechaLarga(state.centro.fecha):'—'}</div>
+  </div>
+  <div class="box">
+    <div><span class="k"><b>Avance:</b></span> ${m.resp}/${TOTAL} (${Math.round(m.resp/TOTAL*100)}%)</div>
+    <div><span class="k"><b>Cumplimiento legal:</b></span> ${m.cumpl===null?'sin evaluar':m.cumpl+'%'} — ${m.etiqueta}</div>
+    <div><span class="k"><b>Hallazgos (no cumple):</b></span> ${m.legalNo}</div>
+    <div><span class="k"><b>Pendientes:</b></span> ${TOTAL-m.resp}</div>
+    <div><span class="k"><b>Recomendaciones logradas:</b></span> ${m.recOk}/${m.recTotal}</div>
+  </div>
+  ${m.hasExpo?`<div class="expo"><div><b>Exposición estimada a multas</b></div><div class="big">${pesos(m.eMin)} – ${pesos(m.eMax)}</div><div style="font-size:12px;color:#3d4f4b;margin-top:2px">por infracción, un trabajador (${m.eMin}–${m.eMax} UMA)</div>${afectados()>1?`<div class="big" style="margin-top:8px">× ${afectados()} afectados: ${pesos(m.eMin*afectados())} – ${pesos(m.eMax*afectados())}</div>`:''}<div style="font-size:11.5px;color:#3d4f4b;margin-top:8px">Suma de las fracciones distintas con hallazgo. La multa por trabajador aplica solo a infracciones que causan daño directo y evaluable, a criterio de la autoridad (no equivale a multiplicar por toda la plantilla); se duplica en reincidencia (art. 992 LFT).</div></div>`:''}
+  ${filas}
+  <h3>Referencia de sanciones (LFT)</h3><table>${refRows}</table>
+  <div class="foot">
+    <p><b>Fuentes:</b> Decreto de reforma al art. 123 constitucional, DOF 03-mar-2026. Decreto de reforma a la LFT en materia de reducción de la jornada, DOF 01-may-2026. Ley Federal del Trabajo vigente, arts. 992, 994 y 995. NOM-019-STPS-2011, NOM-030-STPS-2009, NOM-035-STPS-2018, NOM-036-1-STPS-2018, NOM-037-STPS-2023. Valor de la UMA 2026 (INEGI).</p>
+    <p>Material de capacitación; no constituye asesoría jurídica individualizada. Los rangos de multa son orientativos: la autoridad determina el monto conforme al art. 992 LFT. Validar cada caso contra la LFT vigente.</p>
+    <p>Ing. Carlos Eduardo Roa Sánchez · Servicio Integral de Consultoría en SST · Agente Capacitador Externo STPS · Céd. Prof. 13165676.</p>
+  </div>
+  <script>window.onload=function(){setTimeout(function(){window.print&&window.print()},350)}<\/script>
+  </body></html>`;
+  const blob = new Blob([rep], {type:'text/html;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  const nom=(state.centro.empresa||'centro').replace(/[^\w\-áéíóúñ ]/gi,'').trim().replace(/\s+/g,'-').toLowerCase();
+  a.href=url; a.download='reporte-jornada-'+(nom||'centro')+'.html';
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),4000);
+  toast('Reporte descargado. Ábrelo para ver o imprimir a PDF.');
+});
+
+/* ====== Reiniciar ====== */
+document.getElementById('resetBtn').addEventListener('click', ()=>{
+  if(!confirm('¿Borrar todas las respuestas y los datos del centro? Esta acción no se puede deshacer.')) return;
+  state={items:{},centro:{}}; save();
+  document.querySelectorAll('input[data-c]').forEach(i=>i.value='');
+  document.querySelectorAll('.seg button').forEach(b=>b.setAttribute('aria-pressed','false'));
+  renderChips(); renderRef(); recompute(); closeSheet(); toast('Checklist reiniciado');
+});
+
+/* ====== Toast ====== */
+let tT; function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(tT); tT=setTimeout(()=>t.classList.remove('show'),2600); }
+
+/* ====== Init ====== */
+DATA.forEach((s,si)=> s.items.forEach((_,ii)=> paintItem(si,ii)));
+renderChips(); renderRef(); recompute();
+</script>
+</body>
+</html>
