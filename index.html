@@ -7,7 +7,7 @@
 <style>
   :root{
     --ink:#12211f;--ink-soft:#3d4f4b;--bg:#eef2f0;--surface:#ffffff;
-    --brand:#0e6e63;--brand-deep:#0a4f47;--line:#d6dedb;
+    --brand:#1b5a9c;--brand-deep:#123a66;--line:#d6dedb;
     --ok:#157f52;--ok-bg:#e5f3ea;--no:#be3a34;--no-bg:#fbe9e8;
     --na:#6f7a86;--na-bg:#eceff2;--warn:#a9760a;
     --sanc-ink:#7a5a06;--sanc-bg:#fbf4df;--sanc-line:#f0e2b8;
@@ -24,10 +24,14 @@
   .h-sub{font-size:12px;opacity:.82;margin:2px 0 10px}
   .prog-row{display:flex;align-items:center;gap:10px}
   .prog-track{flex:1;height:9px;border-radius:99px;background:rgba(255,255,255,.22);overflow:hidden}
-  .prog-fill{height:100%;width:0;background:#8ee3b0;border-radius:99px;transition:width .25s ease}
+  .prog-fill{height:100%;width:0;background:#8ec5f0;border-radius:99px;transition:width .25s ease}
   .prog-num{font-size:13px;font-variant-numeric:tabular-nums;min-width:74px;text-align:right}
   .dot{width:11px;height:11px;border-radius:50%;background:var(--na);display:inline-block;flex:none;box-shadow:0 0 0 3px rgba(255,255,255,.15)}
   .dot.rojo{background:#ff6b63}.dot.ambar{background:#ffcf5c}.dot.verde{background:#8ee3b0}
+  .brandbar{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#fff;padding:8px 16px;border-bottom:1px solid var(--line)}
+  .brandbar img{display:block}
+  .brandbar .l-cers{height:46px;width:auto}
+  .brandbar .l-amisi{height:30px;width:auto}
   main{max-width:640px;margin:0 auto;padding:14px 12px 0}
   .card{background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);margin-bottom:12px;overflow:hidden}
   .fold-head{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;background:none;border:0;cursor:pointer;padding:14px 16px;font:inherit;color:var(--ink);text-align:left}
@@ -65,7 +69,6 @@
   .seg button[aria-pressed="true"][data-v="no"]{background:var(--no);border-color:var(--no);color:#fff}
   .seg button[aria-pressed="true"][data-v="na"]{background:var(--na);border-color:var(--na);color:#fff}
   .seg button:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
-  /* Tabla de sanciones */
   .reftab{width:100%;border-collapse:collapse;font-size:12.5px}
   .reftab td{border-bottom:1px solid #eef2f0;padding:9px 6px;vertical-align:top}
   .reftab tr:last-child td{border-bottom:0}
@@ -96,9 +99,16 @@
   .badge.verde{background:var(--ok-bg);color:var(--ok)}
   .badge.neutro{background:var(--na-bg);color:var(--na)}
   .expo{background:#fffaf0;border:1px solid var(--sanc-line);border-radius:14px;margin:0 12px 12px;padding:16px}
-  .expo .l{font-size:12px;color:var(--sanc-ink);font-weight:700;text-transform:none;margin-bottom:4px}
-  .expo .big{font-family:var(--serif);font-size:26px;font-weight:700;color:#8a6a08;line-height:1.1}
-  .expo .note{font-size:11.5px;color:var(--ink-soft);margin-top:8px}
+  .expo .l{font-size:12.5px;color:var(--sanc-ink);font-weight:700}
+  .expotab{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:6px}
+  .expotab td{border-bottom:1px solid var(--sanc-line);padding:8px 4px;vertical-align:top}
+  .expotab tr:last-child td{border-bottom:0}
+  .expotab .u{white-space:nowrap;text-align:right;color:#8a6a08;font-weight:700}
+  .eb{font-size:11px;color:var(--ink-soft);margin-top:2px;font-weight:400}
+  .ep{font-size:11px;color:var(--ink-soft);font-weight:400;margin-top:1px}
+  .etot{font-size:13px;color:#8a6a08;margin-top:8px}
+  .etot b{font-family:var(--serif);font-size:16px}
+  .expo .note{font-size:11.5px;color:var(--ink-soft);margin-top:10px}
   .stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 12px 12px}
   .stat{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
   .stat .n{font-family:var(--serif);font-size:24px;font-weight:700;line-height:1}
@@ -109,7 +119,7 @@
   .br-row:last-child{border-bottom:0}
   .br-row .bn{font-weight:600;flex:1}
   .br-bar{width:64px;height:7px;border-radius:99px;background:#e7ecea;overflow:hidden;flex:none}
-  .br-bar i{display:block;height:100%;background:var(--ok);border-radius:99px}
+  .br-bar i{display:block;height:100%;background:var(--brand);border-radius:99px}
   .br-num{font-size:12px;font-variant-numeric:tabular-nums;color:var(--ink-soft);min-width:34px;text-align:right}
   .find{background:var(--surface);border:1px solid var(--line);border-radius:12px;margin:0 12px 12px;padding:4px 0}
   .find h3{font-size:13px;margin:12px 14px 8px;color:var(--ink)}
@@ -134,9 +144,14 @@
 </head>
 <body>
 
+<div class="brandbar">
+  <img class="l-cers" id="logoCers" alt="CERS">
+  <img class="l-amisi" id="logoAmisi" alt="AMISI Miembros">
+</div>
+
 <header>
   <p class="h-title">Auditoría de jornada · 40 horas</p>
-  <p class="h-sub">Marca cada punto conforme lo revisas. El avance, el cumplimiento y la exposición a multas se calculan al momento.</p>
+  <p class="h-sub">Marca cada punto conforme lo revisas. El avance, el cumplimiento y una referencia orientativa de sanciones se calculan al momento.</p>
   <div class="prog-row">
     <span id="dot" class="dot" aria-hidden="true"></span>
     <div class="prog-track"><div id="progFill" class="prog-fill"></div></div>
@@ -159,7 +174,7 @@
       <div class="field"><label for="c_fecha">Fecha</label><input id="c_fecha" data-c="fecha" type="date"></div>
       <div class="field"><label for="c_uma">Valor diario de la UMA (pesos)</label><input id="c_uma" data-c="uma" inputmode="decimal" autocomplete="off" placeholder="117.31"></div>
       <div class="field"><label for="c_afect">Trabajadores afectados (para proyectar la multa)</label><input id="c_afect" data-c="afect" inputmode="numeric" autocomplete="off" placeholder="1"></div>
-      <p class="hint">Marca un punto como <b>Cumple</b> solo cuando exista evidencia documental que lo respalde. La UMA se actualiza cada 1 de febrero; en 2026 es de <b>$117.31</b> diarios. Las multas se calculan con la UMA vigente al cometerse la infracción, por cada trabajador afectado, y se duplican en reincidencia (art.&nbsp;992 LFT).</p>
+      <p class="hint">Marca un punto como <b>Cumple</b> solo cuando exista evidencia documental que lo respalde. La UMA se actualiza cada 1 de febrero; en 2026 es de <b>$117.31</b> diarios y las multas se calculan con la UMA vigente al cometerse la infracción. Los rangos que muestra esta herramienta son <b>orientativos</b>: el monto final lo individualiza la autoridad conforme al art.&nbsp;992 LFT (intencionalidad, gravedad, daños, capacidad económica y reincidencia).</p>
     </div>
   </section>
 
@@ -177,8 +192,8 @@
 <div class="foot">
   <p><b>Fechas clave.</b> 1 may–31 dic 2026: periodo para ajustar procesos (Transitorio Tercero). 1 ene 2027: entran en vigor las disposiciones de la STPS sobre registro electrónico (Transitorio Quinto) y aplica el primer recorte, a 46 h semanales (Transitorio Segundo). 1 feb de cada año: se actualiza la UMA, base de las multas (art.&nbsp;992 LFT); en 2026 es de $117.31 diarios.</p>
   <p><b>Fuentes.</b> Decreto de reforma al art. 123 constitucional, DOF 03-mar-2026. Decreto de reforma a la LFT en materia de reducción de la jornada, DOF 01-may-2026. Ley Federal del Trabajo vigente, arts. 992, 994 y 995 (sanciones). NOM-019-STPS-2011, NOM-030-STPS-2009, NOM-035-STPS-2018, NOM-036-1-STPS-2018 y NOM-037-STPS-2023. Valor de la UMA 2026 (INEGI).</p>
-  <p>Material de capacitación; no constituye asesoría jurídica individualizada. Los rangos de multa son orientativos: la autoridad determina el monto final conforme al art. 992 LFT. Cada caso debe validarse contra la LFT vigente y las circunstancias del centro de trabajo.</p>
-  <p>Ing. Carlos Eduardo Roa Sánchez · Servicio Integral de Consultoría en SST · Agente Capacitador Externo STPS · Céd. Prof. 13165676.</p>
+  <p>Material de capacitación; no constituye asesoría jurídica individualizada. Los rangos de multa son orientativos y no representan la sanción que necesariamente impondrá la autoridad. Cada caso debe validarse contra la LFT vigente y las circunstancias del centro de trabajo.</p>
+  <p>Ing. Carlos Eduardo Roa Sánchez · Especialidad en salud ocupacional y derecho laboral · Especialización en Ergonomía y Psicosociología · Contacto: 241 179 4542 · c.roa@amisimx.org</p>
 </div>
 
 <div class="bottom">
@@ -201,14 +216,10 @@
     <div class="badge neutro" id="scBadge"><span class="dot" style="box-shadow:none"></span><span id="scBadgeT">Sin iniciar</span></div>
   </div>
 
-  <div class="expo" id="expoCard" style="display:none">
-    <div class="l">Exposición estimada a multas</div>
-    <div class="big" id="expoVal">—</div>
-    <div class="note" id="expoNote"></div>
-  </div>
+  <div class="expo" id="expoCard" style="display:none"></div>
 
   <div class="stats">
-    <div class="stat"><div class="n" id="stResp">0</div><div class="l">Respondidos de 47</div></div>
+    <div class="stat"><div class="n" id="stResp">0</div><div class="l">Respondidos de <span id="stTotal">48</span></div></div>
     <div class="stat"><div class="n pend" id="stPend">47</div><div class="l">Pendientes</div></div>
     <div class="stat"><div class="n no" id="stHall">0</div><div class="l">Hallazgos (no cumple)</div></div>
     <div class="stat"><div class="n" id="stRec">0 / 5</div><div class="l">Recomendaciones logradas</div></div>
@@ -253,6 +264,7 @@ const DATA = [
    {t:`No se ordena tiempo extraordinario a personas menores de 18 años.`, f:`Art. 178 LFT; art. 123, Apartado A, fr. XI, CPEUM`},
    {t:`Cada hora extra cuenta con autorización previa documentada. (Recomendación de control.)`, f:`Soporte probatorio: arts. 784, 804 y 805 LFT`, rec:true},
    {t:`El tiempo extra no se usa como parte fija y permanente del turno.`, f:`Art. 66 LFT: procede por circunstancias extraordinarias`},
+   {t:`La dirección conoce que imponer de forma sistemática jornadas por encima de los límites de la LFT puede tipificarse como explotación laboral, con responsabilidad penal para quien fija las jornadas. (Concientización.)`, f:`Art. 21, fr. IV, Ley General de Trata (reforma DOF 07-jun-2024); pena de 3 a 10 años. Refuerza arts. 66 y 68 LFT.`, rec:true},
  ]},
  {n:4, titulo:'Salario y nómina', items:[
    {t:`No se redujeron sueldos, salarios ni prestaciones a causa de la reducción de la jornada.`, f:`Transitorio Séptimo del decreto (DOF 01-may-2026); Transitorio Cuarto del decreto constitucional (DOF 03-mar-2026)`},
@@ -268,7 +280,7 @@ const DATA = [
    {t:`Las políticas internas de horario, descansos y autorización de horas extra están actualizadas.`, f:`Consistencia con arts. 58, 61, 66 y 68 LFT`},
    {t:`Existe evidencia del consentimiento expreso en los esquemas de jornada comprimida.`, f:`Art. 58, segundo párrafo, LFT`},
  ]},
- {n:6, titulo:'Registro electrónico de jornada', items:[
+ {n:6, titulo:'Registro electrónico de jornada (preparación · vigencia 2027)', items:[
    {t:`Se registra de manera electrónica el horario de inicio y finalización de la jornada de cada persona trabajadora.`, f:`Art. 132 fr. XXXIV LFT`},
    {t:`El registro puede proporcionarse a la autoridad laboral cuando lo requiera.`, f:`Art. 132 fr. XXXIV LFT`},
    {t:`El registro se conserva y puede exhibirse en juicio o inspección.`, f:`Art. 804 LFT`},
@@ -278,11 +290,11 @@ const DATA = [
    {t:`La dirección conoce la sanción por incumplir esta obligación: 250 a 5,000 UMA, por cada trabajador afectado y con duplicación en reincidencia.`, f:`Art. 994 fr. IV Bis y art. 992 LFT`},
  ]},
  {n:7, titulo:'Seguridad y salud en el trabajo', items:[
-   {t:`Se determinó, conforme a la norma y a la magnitud del cambio, si procede actualizar o reevaluar los factores de riesgo psicosocial tras el rediseño de turnos.`, f:`NOM-035-STPS-2018`},
+   {t:`Se determinó, conforme a la norma y a la magnitud del cambio, si procede actualizar o reevaluar los factores de riesgo psicosocial tras el rediseño de turnos.`, f:`NOM-035-STPS-2018 (identificación y evaluación al menos cada dos años)`},
    {t:`En puestos con manejo manual de cargas se revisó la exposición, considerando que los límites de masa acumulada están expresados por jornada de 8 horas y no se amplían por alargar el turno.`, f:`NOM-036-1-STPS-2018 (10,000 kg/jornada de 8 h hasta 10 m; 6,000 kg/jornada de 8 h hasta 20 m)`},
    {t:`Se recalcularon pausas y periodos de descanso y de recuperación en los esquemas comprimidos.`, f:`NOM-036-1-STPS-2018, Capítulos 7 y 8`},
    {t:`El diagnóstico de condiciones de seguridad y el programa o la relación de medidas preventivas se actualizaron con la nueva jornada.`, f:`NOM-030-STPS-2009`},
-   {t:`La Comisión de Seguridad e Higiene fue notificada del rediseño y tiene programado y documentado su recorrido de verificación.`, f:`Arts. 509 y 510 LFT; NOM-019-STPS-2011 (periodicidad cuando menos trimestral)`},
+   {t:`La Comisión de Seguridad e Higiene fue notificada del rediseño y tiene programado y documentado su recorrido de verificación.`, f:`Arts. 509 y 510 LFT; NOM-019-STPS-2011 (recorridos al menos trimestrales; verificaciones extraordinarias ante cambios significativos)`},
    {t:`Si hay personal en teletrabajo, su registro de jornada se atiende conforme a la norma aplicable.`, f:`NOM-037-STPS-2023, Teletrabajo`},
  ]},
  {n:8, titulo:'Comisiones, comunicación y cierre', items:[
@@ -295,35 +307,40 @@ const DATA = [
 ];
 
 /* ====== Sanciones (LFT, texto vigente) ======
-   Rangos en UMA. Tipo 'multa' entra en la exposición estimada; 'nota' no. */
+   Rangos en UMA. Tipo 'multa' entra en la referencia; 'nota' no.
+   vigencia:'2027' → se muestra aparte, no se acumula al rango vigente. */
 const SANC = {
   0:{tipo:'multa', frac:'Art. 994, fr. I, LFT', base:'jornada máxima y descanso semanal (arts. 61 y 69)', uma:[50,250]},
-  1:{tipo:'multa', frac:'Art. 994, fr. I, LFT', base:'jornada, descanso y prima dominical (arts. 61, 69 y 71)', uma:[50,250]},
+  1:{tipo:'multa', frac:'Art. 994, fr. I, LFT', base:'jornada máxima diaria y descanso semanal (arts. 61 y 69)', uma:[50,250]},
   2:{tipo:'multa', frac:'Art. 994, fr. I, LFT', base:'jornada diaria (art. 61)', uma:[50,250], nota:'Rebasar la jornada diaria cae en la fr. I. El pago incorrecto de horas extra (arts. 66 y 68) no tiene multa fija en el art. 994: se reclama como diferencias salariales.'},
   3:{tipo:'nota', frac:'Transitorio Séptimo del decreto', base:'protección salarial', texto:'Reducir sueldos, salarios o prestaciones por la reforma es nulo de pleno derecho: implica pago retroactivo y posible demanda, no una multa fija. Los errores de nómina en horas extra se reclaman como diferencias salariales.'},
   4:{tipo:'multa', frac:'Art. 994, fr. III, LFT', base:'obligaciones documentales del art. 132', uma:[50,1500], nota:'El RIT y su depósito ante el CFCRL (arts. 422–425) se verifican en inspección.'},
-  5:{tipo:'multa', frac:'Art. 994, fr. IV Bis, LFT', base:'registro electrónico de jornada (art. 132, fr. XXXIV)', uma:[250,5000]},
+  5:{tipo:'multa', frac:'Art. 994, fr. IV Bis, LFT', base:'registro electrónico de jornada (art. 132, fr. XXXIV)', uma:[250,5000], vigencia:'2027', nota:'Obligación y sanción aplicables conforme a la entrada en vigor de las disposiciones generales de la STPS (1 de enero de 2027) y al ámbito y excepciones que ésta determine (Transitorio Quinto).'},
   6:{tipo:'multa', frac:'Art. 994, fr. V, LFT', base:'seguridad e higiene y prevención de riesgos', uma:[250,5000]},
   7:{tipo:'nota', frac:'Arts. 784, 804 y 805 LFT', base:'carga de la prueba', texto:'Estos puntos son de defensibilidad probatoria: su ausencia no es una multa directa, pero debilita al patrón ante inspección o juicio. La falta de integración de la comisión mixta puede sancionarse por la vía de inspección.'},
 };
-/* Excepción a nivel de punto: horas extra a menores → art. 995 */
-const OVERRIDE = { '2-5': {tipo:'multa', frac:'Art. 995 LFT', base:'normas de trabajo de menores (horas extra a menores)', uma:[50,2500]} };
+/* Excepciones a nivel de punto */
+const OVERRIDE = {
+  '2-5': {tipo:'multa', frac:'Art. 995 LFT', base:'normas de trabajo de menores (horas extra a menores)', uma:[50,2500]},
+  '1-5': {tipo:'nota', frac:'Art. 71 LFT', base:'prima dominical', texto:'El art. 71 no está incluido en el catálogo del art. 994, fr. I; la omisión de la prima dominical se reclama como diferencia salarial, no como multa fija.'},
+  '2-8': {tipo:'nota', frac:'Ley General de Trata', base:'responsabilidad penal', texto:'Imponer de forma sistemática jornadas por encima de los límites de la LFT puede tipificarse como explotación laboral, con responsabilidad penal (art. 21, fr. IV, Ley General de Trata; pena de 3 a 10 años) para quien fija las jornadas.'},
+};
 
-/* Tabla de referencia (id único por fracción para no duplicar en la suma) */
 const REF = [
   {id:'I',    concepto:'Jornada máxima diaria y descanso semanal', base:'Arts. 61 y 69 · Art. 994, fr. I', uma:[50,250]},
   {id:'III',  concepto:'Obligaciones documentales del patrón', base:'Art. 132 · Art. 994, fr. III', uma:[50,1500]},
-  {id:'IVbis',concepto:'Registro electrónico de jornada', base:'Art. 132, fr. XXXIV · Art. 994, fr. IV Bis', uma:[250,5000]},
+  {id:'IVbis',concepto:'Registro electrónico de jornada', base:'Art. 132, fr. XXXIV · Art. 994, fr. IV Bis', uma:[250,5000], nota:'aplicable desde 2027'},
   {id:'V',    concepto:'Seguridad e higiene y prevención de riesgos', base:'Art. 994, fr. V', uma:[250,5000]},
   {id:'995',  concepto:'Horas extra a personas menores de edad', base:'Art. 995', uma:[50,2500]},
 ];
-/* id canónico por fracción, para deduplicar la exposición */
 function sancId(s){ if(s.frac.indexOf('IV Bis')>=0)return 'IVbis'; if(s.frac.indexOf('995')>=0)return '995'; if(/fr\. V\b/.test(s.frac))return 'V'; if(/fr\. III\b/.test(s.frac))return 'III'; if(/fr\. I\b/.test(s.frac))return 'I'; return s.frac; }
 
 const CENTRO_FIELDS = [['empresa'],['centro'],['pt'],['turnos'],['resp'],['fecha'],['uma'],['afect']];
-const KEY = 'auditoria40h_v2';
+const KEY = 'auditoria40h_v3';
 const TOTAL = DATA.reduce((a,s)=>a+s.items.length,0);
 const UMA_DEF = 117.31;
+const LOGO_CERS='data:image/jpeg;base64,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';
+const LOGO_AMISI='data:image/jpeg;base64,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';
 
 let state = {items:{}, centro:{}};
 try{ const raw = localStorage.getItem(KEY); if(raw) state = Object.assign(state, JSON.parse(raw)); }catch(e){}
@@ -365,22 +382,28 @@ DATA.forEach((sec, si)=>{
   secsEl.appendChild(card);
 });
 
-/* Chip de sanción por punto */
 function chipHTML(si,ii){
   const it = DATA[si].items[ii];
+  const o = OVERRIDE[key(si,ii)];
+  if(o){
+    if(o.tipo==='nota') return `<div class="sanc soft"><b>Nota:</b> ${esc(o.texto)}</div>`;
+    const preo = o.vigencia ? ('Multa aplicable desde '+o.vigencia+': ') : 'Multa si no cumple: ';
+    return `<div class="sanc"><b>${preo}</b>${esc(o.frac)} · ${o.uma[0]}–${o.uma[1]} UMA (≈ ${pesos(o.uma[0])}–${pesos(o.uma[1])})</div>`;
+  }
   if(it.rec) return `<div class="sanc soft"><b>Sin multa directa</b> · es una recomendación de defensibilidad.</div>`;
-  const s = sancFor(si,ii);
+  const s = SANC[si];
   if(s.tipo==='nota') return `<div class="sanc soft"><b>Exposición:</b> ${esc(s.texto)}</div>`;
-  return `<div class="sanc"><b>Multa si no cumple:</b> ${esc(s.frac)} · ${s.uma[0]}–${s.uma[1]} UMA (≈ ${pesos(s.uma[0])}–${pesos(s.uma[1])})</div>`;
+  const pre = s.vigencia ? ('Multa aplicable desde '+s.vigencia+': ') : 'Multa si no cumple: ';
+  const cls = s.vigencia ? 'sanc soft' : 'sanc';
+  return `<div class="${cls}"><b>${pre}</b>${esc(s.frac)} · ${s.uma[0]}–${s.uma[1]} UMA (≈ ${pesos(s.uma[0])}–${pesos(s.uma[1])})</div>`;
 }
 function renderChips(){ document.querySelectorAll('.sanc-slot').forEach(el=>{ el.innerHTML = chipHTML(+el.dataset.si, +el.dataset.ii); }); }
 
-/* Tabla de referencia */
 function renderRef(){
   document.getElementById('refTab').innerHTML = REF.map(r=>`
-    <tr><td>${esc(r.concepto)}<div class="b">${esc(r.base)}</div></td>
+    <tr><td>${esc(r.concepto)}<div class="b">${esc(r.base)}${r.nota?' · '+esc(r.nota):''}</div></td>
     <td class="u">${r.uma[0]}–${r.uma[1]} UMA<div class="p">${pesos(r.uma[0])}–${pesos(r.uma[1])}</div></td></tr>`).join('')
-    + `<tr><td>Reincidencia y por trabajador<div class="b">Art. 992 LFT</div></td><td class="u">×2<div class="p">por cada trabajador afectado</div></td></tr>`;
+    + `<tr><td>Reincidencia y por trabajador<div class="b">Art. 992 LFT</div></td><td class="u">×2<div class="p">por trabajador afectado</div></td></tr>`;
 }
 
 /* ====== Interacción ====== */
@@ -406,27 +429,32 @@ CENTRO_FIELDS.forEach(([id])=>{
 
 /* ====== Cálculo ====== */
 function metrics(){
-  let resp=0, legalOk=0, legalNo=0, legalTotal=0, recOk=0, recTotal=0;
+  let resp=0, legalOk=0, legalNo=0, recOk=0, recTotal=0;
   const perSec = DATA.map(s=>({ok:0,done:0,total:s.items.length}));
   const hallazgos=[], pendientes=[];
-  const expoMap = {}; // id -> [min,max] UMA (deduplicado)
+  const expo = {}; // id -> {frac, base, uma, count, vig}
   DATA.forEach((s,si)=> s.items.forEach((it,ii)=>{
     const v = state.items[key(si,ii)] || null;
     if(v){ resp++; perSec[si].done++; if(v==='ok') perSec[si].ok++; }
     if(it.rec){ recTotal++; if(v==='ok')recOk++; }
     else{
-      legalTotal++;
       if(v==='ok')legalOk++;
       else if(v==='no'){
         legalNo++;
         const sc = sancFor(si,ii);
         hallazgos.push({t:it.t, sc});
-        if(sc.tipo==='multa'){ const id=sancId(sc); if(!expoMap[id]) expoMap[id]=sc.uma.slice(); }
+        if(sc.tipo==='multa'){
+          const id=sancId(sc);
+          if(!expo[id]) expo[id]={frac:sc.frac, base:sc.base||'', uma:sc.uma.slice(), count:0, vig:sc.vigencia||null};
+          expo[id].count++;
+        }
       }
     }
     if(!v && !it.rec) pendientes.push({t:it.t});
   }));
-  let eMin=0,eMax=0; Object.values(expoMap).forEach(r=>{ eMin+=r[0]; eMax+=r[1]; });
+  const expoVig = Object.values(expo).filter(e=>!e.vig);
+  const expoFut = Object.values(expo).filter(e=>e.vig);
+  let eMin=0,eMax=0; expoVig.forEach(e=>{ eMin+=e.uma[0]; eMax+=e.uma[1]; });
   const evalLegal = legalOk+legalNo;
   const cumpl = evalLegal>0 ? Math.round(legalOk/evalLegal*100) : null;
   let estado='neutro', etiqueta='Sin iniciar';
@@ -435,7 +463,7 @@ function metrics(){
     else if(pendientes.length>0){ estado='ambar'; etiqueta='En progreso'; }
     else { estado='verde'; etiqueta='Sin hallazgos'; }
   }
-  return {resp,legalNo,recOk,recTotal,perSec,hallazgos,pendientes,cumpl,estado,etiqueta,eMin,eMax,hasExpo:Object.keys(expoMap).length>0};
+  return {resp,legalNo,recOk,recTotal,perSec,hallazgos,pendientes,cumpl,estado,etiqueta,expoVig,expoFut,eMin,eMax,hasExpo:(expoVig.length+expoFut.length)>0};
 }
 
 function recompute(){
@@ -455,19 +483,25 @@ function recompute(){
   document.getElementById('stHall').textContent=m.legalNo;
   document.getElementById('stRec').textContent=m.recOk+' / '+m.recTotal;
   document.getElementById('sSub').textContent=(state.centro.empresa?state.centro.empresa+' · ':'')+(state.centro.fecha?fechaLarga(state.centro.fecha):'');
-  // exposición
+  // referencia de sanciones (exposición)
   const ec=document.getElementById('expoCard');
   if(m.hasExpo){
     ec.style.display='block';
     const N=afectados();
-    let html = pesos(m.eMin)+' – '+pesos(m.eMax);
-    let note = 'Rango por infracción, un trabajador ('+m.eMin+'–'+m.eMax+' UMA).';
-    if(N>1){ html += '<div style="font-size:15px;font-weight:700;color:#8a6a08;margin-top:6px">× '+N+' afectados: '+pesos(m.eMin*N)+' – '+pesos(m.eMax*N)+'</div>'; note += ' Proyección multiplicada por los '+N+' trabajadores que marcaste como afectados.'; }
-    note += ' La multa por trabajador aplica solo a infracciones que causan daño directo y evaluable, a criterio de la autoridad (no equivale a multiplicar por toda la plantilla). Se duplica en reincidencia (art. 992 LFT).';
-    document.getElementById('expoVal').innerHTML=html;
-    document.getElementById('expoNote').textContent=note;
+    const row = e => `<tr><td>${esc(e.frac)}<div class="eb">${esc(e.base)}${e.count>1?' · '+e.count+' hallazgos':''}</div></td><td class="u">${e.uma[0]}–${e.uma[1]} UMA<div class="ep">${pesos(e.uma[0])}–${pesos(e.uma[1])}</div></td></tr>`;
+    let h = '<div class="l">Rangos sancionadores potencialmente aplicables</div>';
+    if(m.expoVig.length){
+      h += '<table class="expotab">'+m.expoVig.map(row).join('')+'</table>';
+      h += `<div class="etot">Referencia acumulada (una vez por fracción vigente): <b>${pesos(m.eMin)} – ${pesos(m.eMax)}</b></div>`;
+      if(N>1) h += `<div class="etot">Proyección × ${N} trabajadores afectados: <b>${pesos(m.eMin*N)} – ${pesos(m.eMax*N)}</b></div>`;
+    }
+    if(m.expoFut.length){
+      h += '<div class="l" style="margin-top:12px">Aplicables a partir de 2027</div><table class="expotab">'+m.expoFut.map(row).join('')+'</table>';
+    }
+    h += '<div class="note">No es la multa final. Cada infracción independiente puede sancionarse por separado (concurrencia) y, cuando legalmente corresponda, por cada persona trabajadora afectada (art. 992 LFT). El monto lo individualiza la autoridad conforme a intencionalidad, gravedad, daños, capacidad económica y reincidencia (se duplica en reincidencia).</div>';
+    ec.innerHTML = h;
   } else ec.style.display='none';
-  // desglose
+  // desglose por sección
   document.getElementById('breakdown').innerHTML = m.perSec.map((p,si)=>{
     const pc=p.total?Math.round(p.done/p.total*100):0;
     return `<div class="br-row"><span class="sec-n" style="width:24px;height:24px;font-size:12px">${DATA[si].n}</span><span class="bn">${esc(DATA[si].titulo)}</span><span class="br-bar"><i style="width:${pc}%"></i></span><span class="br-num">${p.done}/${p.total}</span></div>`;
@@ -478,7 +512,7 @@ function recompute(){
     fh += `<h3>Hallazgos — puntos marcados «No cumple» (${m.hallazgos.length})</h3><ul>`;
     fh += m.hallazgos.map(h=>{
       let s;
-      if(h.sc.tipo==='multa') s=`Multa: ${esc(h.sc.frac)} · ${h.sc.uma[0]}–${h.sc.uma[1]} UMA (≈ ${pesos(h.sc.uma[0])}–${pesos(h.sc.uma[1])})`;
+      if(h.sc.tipo==='multa'){ const pre=h.sc.vigencia?('Multa (desde '+h.sc.vigencia+'): '):'Multa: '; s=pre+esc(h.sc.frac)+' · '+h.sc.uma[0]+'–'+h.sc.uma[1]+' UMA (≈ '+pesos(h.sc.uma[0])+'–'+pesos(h.sc.uma[1])+')'; }
       else s=esc(h.sc.texto||h.sc.frac);
       return `<li class="no">${esc(h.t)}<span class="s">${s}</span></li>`;
     }).join('') + `</ul>`;
@@ -512,12 +546,13 @@ function resumenTexto(m){
   L.push('Cumplimiento legal: '+(m.cumpl===null?'sin evaluar':m.cumpl+'%')+' — '+m.etiqueta);
   L.push('Hallazgos (no cumple): '+m.legalNo);
   L.push('Pendientes: '+(TOTAL-m.resp));
-  if(m.hasExpo){
+  if(m.expoVig.length){
     const N=afectados();
-    L.push('Exposición por infracción (1 trabajador): '+pesos(m.eMin)+' – '+pesos(m.eMax));
+    L.push('Rangos sancionadores (referencia acumulada, una vez por fracción vigente): '+pesos(m.eMin)+' – '+pesos(m.eMax));
     if(N>1) L.push('Proyección × '+N+' afectados: '+pesos(m.eMin*N)+' – '+pesos(m.eMax*N));
-    L.push('(Aplica por trabajador con daño directo; se duplica en reincidencia, art. 992 LFT.)');
   }
+  if(m.expoFut.length) L.push('Además, sanciones aplicables desde 2027 (registro electrónico de jornada).');
+  if(m.hasExpo) L.push('No es la multa final; se individualiza conforme al art. 992 LFT (concurrencia, por trabajador afectado y reincidencia).');
   L.push('');
   L.push('Checklist del Ing. Carlos E. Roa Sánchez · Consultoría en SST · ACE STPS.');
   return L.join('\n');
@@ -531,28 +566,35 @@ document.getElementById('shareBtn').addEventListener('click', async ()=>{
 
 /* ====== Reporte descargable ====== */
 document.getElementById('reportBtn').addEventListener('click', ()=>{
-  const m = metrics();
+  const m = metrics(); const N=afectados();
   const filas = DATA.map((s,si)=>{
     const its = s.items.map((it,ii)=>{
       const v = state.items[key(si,ii)] || null;
       const est = v==='ok'?'Cumple':v==='no'?'No cumple':v==='na'?'No aplica':'—';
       const cls = v==='ok'?'ok':v==='no'?'no':v==='na'?'na':'pe';
       let sTxt='';
-      if(!it.rec){ const sc=sancFor(si,ii); sTxt = sc.tipo==='multa' ? `<div class="s">Multa: ${esc(sc.frac)} · ${sc.uma[0]}–${sc.uma[1]} UMA (${pesos(sc.uma[0])}–${pesos(sc.uma[1])})</div>` : `<div class="s">${esc(sc.texto||sc.frac)}</div>`; }
+      if(!it.rec){ const sc=sancFor(si,ii);
+        if(sc.tipo==='multa'){ const pre=sc.vigencia?('Multa (desde '+sc.vigencia+'): '):'Multa: '; sTxt=`<div class="s">${pre}${esc(sc.frac)} · ${sc.uma[0]}–${sc.uma[1]} UMA (${pesos(sc.uma[0])}–${pesos(sc.uma[1])})</div>`; }
+        else sTxt=`<div class="s">${esc(sc.texto||sc.frac)}</div>`;
+      }
       return `<tr><td class="e ${cls}">${est}</td><td>${esc(it.t)}${it.rec?' <em>(recomendación)</em>':''}<div class="f">${esc(it.f)}</div>${sTxt}</td></tr>`;
     }).join('');
     return `<h3>${s.n}. ${esc(s.titulo)}</h3><table>${its}</table>`;
   }).join('');
-  const refRows = REF.map(r=>`<tr><td>${esc(r.concepto)}<div class="f">${esc(r.base)}</div></td><td class="u">${r.uma[0]}–${r.uma[1]} UMA<div class="f">${pesos(r.uma[0])}–${pesos(r.uma[1])}</div></td></tr>`).join('')
+  const expoRow = e => `<tr><td>${esc(e.frac)}<div class="f">${esc(e.base)}${e.count>1?' · '+e.count+' hallazgos':''}</div></td><td class="u">${e.uma[0]}–${e.uma[1]} UMA<div class="f">${pesos(e.uma[0])}–${pesos(e.uma[1])}</div></td></tr>`;
+  const expoBlock = m.hasExpo ? `<h3>Rangos sancionadores potencialmente aplicables</h3><table>
+    ${m.expoVig.map(expoRow).join('')}
+    ${m.expoVig.length?`<tr><td><b>Referencia acumulada (una vez por fracción vigente)</b>${N>1?'<div class="f">Proyección × '+N+' afectados: '+pesos(m.eMin*N)+' – '+pesos(m.eMax*N)+'</div>':''}</td><td class="u">${pesos(m.eMin)} – ${pesos(m.eMax)}</td></tr>`:''}
+    ${m.expoFut.map(e=>`<tr><td>${esc(e.frac)} <em>(aplicable desde 2027)</em><div class="f">${esc(e.base)}</div></td><td class="u">${e.uma[0]}–${e.uma[1]} UMA<div class="f">${pesos(e.uma[0])}–${pesos(e.uma[1])}</div></td></tr>`).join('')}
+    </table><p style="font-family:Arial,sans-serif;font-size:11.5px;color:#3d4f4b">No es la multa final. Cada infracción independiente puede sancionarse por separado (concurrencia) y, cuando corresponda, por cada persona trabajadora afectada (art. 992 LFT). El monto lo individualiza la autoridad conforme a intencionalidad, gravedad, daños, capacidad económica y reincidencia.</p>` : '';
+  const refRows = REF.map(r=>`<tr><td>${esc(r.concepto)}<div class="f">${esc(r.base)}${r.nota?' · '+esc(r.nota):''}</div></td><td class="u">${r.uma[0]}–${r.uma[1]} UMA<div class="f">${pesos(r.uma[0])}–${pesos(r.uma[1])}</div></td></tr>`).join('')
     + `<tr><td>Reincidencia y por trabajador<div class="f">Art. 992 LFT</div></td><td class="u">×2 · por trabajador afectado</td></tr>`;
   const rep = `<!DOCTYPE html><html lang="es-MX"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Reporte de auditoría de jornada</title>
   <style>body{font-family:Georgia,serif;color:#12211f;max-width:820px;margin:24px auto;padding:0 20px;line-height:1.5}
   h1{font-size:22px;margin:0 0 2px}.meta{font-family:Arial,sans-serif;font-size:13px;color:#3d4f4b;margin:0 0 16px}
   .box{border:1px solid #d6dedb;border-radius:10px;padding:14px 16px;margin:14px 0;font-family:Arial,sans-serif;font-size:14px}
-  .box b{color:#0a4f47}.k{display:inline-block;min-width:220px}
-  .expo{border:1px solid #f0e2b8;background:#fffaf0;border-radius:10px;padding:14px 16px;margin:14px 0;font-family:Arial,sans-serif}
-  .expo .big{font-size:20px;font-weight:700;color:#8a6a08}
-  h3{font-family:Arial,sans-serif;font-size:15px;background:#0e6e63;color:#fff;padding:7px 10px;border-radius:7px;margin:20px 0 6px}
+  .box b{color:#123a66}.k{display:inline-block;min-width:220px}
+  h3{font-family:Arial,sans-serif;font-size:15px;background:#1b5a9c;color:#fff;padding:7px 10px;border-radius:7px;margin:20px 0 6px}
   table{width:100%;border-collapse:collapse;font-family:Arial,sans-serif;font-size:13px}
   td{border-bottom:1px solid #eef2f0;padding:8px 8px;vertical-align:top}
   td.e{white-space:nowrap;font-weight:700;width:92px}.e.ok{color:#157f52}.e.no{color:#be3a34}.e.na{color:#6f7a86}.e.pe{color:#a9760a}
@@ -560,7 +602,8 @@ document.getElementById('reportBtn').addEventListener('click', ()=>{
   .f{color:#3d4f4b;font-size:11.5px;margin-top:3px}.s{color:#8a6a08;font-size:11.5px;margin-top:3px;font-weight:700}
   em{color:#a9760a;font-style:normal;font-size:11px}
   .foot{font-family:Arial,sans-serif;font-size:11px;color:#3d4f4b;margin-top:22px;border-top:1px solid #d6dedb;padding-top:10px}
-  @media print{body{margin:0}h3,td.e,.expo{-webkit-print-color-adjust:exact;print-color-adjust:exact}}</style></head><body>
+  @media print{body{margin:0}h3,td.e{-webkit-print-color-adjust:exact;print-color-adjust:exact}}</style></head><body>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><img src="${LOGO_CERS}" style="height:60px"><img src="${LOGO_AMISI}" style="height:40px"></div>
   <h1>Reporte de auditoría de jornada · 40 horas</h1>
   <p class="meta">Generado el ${new Date().toLocaleDateString('es-MX',{day:'numeric',month:'long',year:'numeric'})} · UMA aplicada: ${fmt.format(uma())} diarios</p>
   <div class="box">
@@ -578,13 +621,13 @@ document.getElementById('reportBtn').addEventListener('click', ()=>{
     <div><span class="k"><b>Pendientes:</b></span> ${TOTAL-m.resp}</div>
     <div><span class="k"><b>Recomendaciones logradas:</b></span> ${m.recOk}/${m.recTotal}</div>
   </div>
-  ${m.hasExpo?`<div class="expo"><div><b>Exposición estimada a multas</b></div><div class="big">${pesos(m.eMin)} – ${pesos(m.eMax)}</div><div style="font-size:12px;color:#3d4f4b;margin-top:2px">por infracción, un trabajador (${m.eMin}–${m.eMax} UMA)</div>${afectados()>1?`<div class="big" style="margin-top:8px">× ${afectados()} afectados: ${pesos(m.eMin*afectados())} – ${pesos(m.eMax*afectados())}</div>`:''}<div style="font-size:11.5px;color:#3d4f4b;margin-top:8px">Suma de las fracciones distintas con hallazgo. La multa por trabajador aplica solo a infracciones que causan daño directo y evaluable, a criterio de la autoridad (no equivale a multiplicar por toda la plantilla); se duplica en reincidencia (art. 992 LFT).</div></div>`:''}
+  ${expoBlock}
   ${filas}
   <h3>Referencia de sanciones (LFT)</h3><table>${refRows}</table>
   <div class="foot">
     <p><b>Fuentes:</b> Decreto de reforma al art. 123 constitucional, DOF 03-mar-2026. Decreto de reforma a la LFT en materia de reducción de la jornada, DOF 01-may-2026. Ley Federal del Trabajo vigente, arts. 992, 994 y 995. NOM-019-STPS-2011, NOM-030-STPS-2009, NOM-035-STPS-2018, NOM-036-1-STPS-2018, NOM-037-STPS-2023. Valor de la UMA 2026 (INEGI).</p>
-    <p>Material de capacitación; no constituye asesoría jurídica individualizada. Los rangos de multa son orientativos: la autoridad determina el monto conforme al art. 992 LFT. Validar cada caso contra la LFT vigente.</p>
-    <p>Ing. Carlos Eduardo Roa Sánchez · Servicio Integral de Consultoría en SST · Agente Capacitador Externo STPS · Céd. Prof. 13165676.</p>
+    <p>Material de capacitación; no constituye asesoría jurídica individualizada. Los rangos de multa son orientativos y no representan la sanción que necesariamente impondrá la autoridad; se individualizan conforme al art. 992 LFT.</p>
+    <p>Ing. Carlos Eduardo Roa Sánchez · Especialidad en salud ocupacional y derecho laboral · Especialización en Ergonomía y Psicosociología · Contacto: 241 179 4542 · c.roa@amisimx.org</p>
   </div>
   <script>window.onload=function(){setTimeout(function(){window.print&&window.print()},350)}<\/script>
   </body></html>`;
@@ -611,6 +654,10 @@ document.getElementById('resetBtn').addEventListener('click', ()=>{
 let tT; function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(tT); tT=setTimeout(()=>t.classList.remove('show'),2600); }
 
 /* ====== Init ====== */
+document.getElementById('logoCers').src=LOGO_CERS;
+document.getElementById('logoAmisi').src=LOGO_AMISI;
+document.getElementById('stTotal').textContent=TOTAL;
+document.getElementById('progNum').textContent='0 / '+TOTAL;
 DATA.forEach((s,si)=> s.items.forEach((_,ii)=> paintItem(si,ii)));
 renderChips(); renderRef(); recompute();
 </script>
