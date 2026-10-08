@@ -200,10 +200,44 @@
                             <div class="text-center p-4">
                                 <p class="text-sm font-semibold text-slate-500 mb-1">Costo Proporcional Mensual</p>
                                 <p class="text-3xl font-black text-slate-900" id="costo-mensual-nuevo">$0.00</p>
-                                <p class="text-xs text-slate-400 mt-2">Referencia sin costo de prestaciones ni cuotas IMSS del nuevo trabajador.</p>
+                                <p class="text-xs text-slate-400 mt-2">Solo salario. Con prestaciones y cuotas patronales:</p><p class="text-2xl font-black text-emerald-700" id="costo-mensual-real">$0.00</p><p class="text-xs text-slate-500" id="sobrecosto-pct">Sobrecosto de prestaciones: 0%</p>
                             </div>
                         </div>
 
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden" id="bloque-prestaciones">
+                    <div class="bg-emerald-800 p-4">
+                        <h2 class="text-lg font-bold text-white text-center">Sobrecosto de prestaciones y cuotas patronales (trabajador adicional)</h2>
+                    </div>
+                    <div class="p-6 grid md:grid-cols-2 gap-6">
+                        <div class="space-y-3 text-sm">
+                            <p class="text-slate-600">Un trabajador nuevo cuesta más que su sueldo: prestaciones de ley y cuotas que paga el patrón. Ajusta los datos de tu empresa.</p>
+                            <label class="flex justify-between items-center gap-3">Aguinaldo (días/año) <input id="p-aguinaldo" type="number" min="15" value="15" class="w-24 border rounded-lg p-1 text-right"></label>
+                            <label class="flex justify-between items-center gap-3">Vacaciones (días/año; 12 el primer año) <input id="p-vacaciones" type="number" min="12" value="12" class="w-24 border rounded-lg p-1 text-right"></label>
+                            <label class="flex justify-between items-center gap-3">Prima vacacional (%) <input id="p-primavac" type="number" min="25" value="25" class="w-24 border rounded-lg p-1 text-right"></label>
+                            <label class="flex justify-between items-center gap-3"><span><input id="p-dominical" type="checkbox"> Trabaja en domingo (prima dominical 25 %)</span></label>
+                            <label class="flex justify-between items-center gap-3">Clase de riesgo de trabajo (prima media) <select id="p-clase" class="border rounded-lg p-1">
+                                <option value="0.54355">Clase I · 0.54355 %</option><option value="1.13065">Clase II · 1.13065 %</option><option value="2.59840">Clase III · 2.59840 %</option><option value="4.65325">Clase IV · 4.65325 %</option><option value="7.58875">Clase V · 7.58875 %</option></select></label>
+                            <label class="flex justify-between items-center gap-3">Cesantía y vejez patronal (%) <input id="p-cesantia" type="number" step="0.001" class="w-24 border rounded-lg p-1 text-right"></label>
+                            <p class="text-xs text-slate-500 -mt-2" id="p-cesantia-nota"></p>
+                            <label class="flex justify-between items-center gap-3">Cuota fija y excedente de enfermedades y maternidad (% del sueldo, de tu SUA) <input id="p-otras" type="number" step="0.01" value="0" class="w-24 border rounded-lg p-1 text-right"></label>
+                            <label class="flex justify-between items-center gap-3">Impuesto sobre nóminas de tu estado (%) <input id="p-isn" type="number" step="0.1" value="0" class="w-24 border rounded-lg p-1 text-right"></label>
+                        </div>
+                        <div class="space-y-2 text-sm">
+                            <table class="w-full"><tbody id="p-tabla"></tbody></table>
+                            <div class="bg-emerald-50 rounded-xl p-4 text-center">
+                                <p class="text-sm font-semibold text-slate-600">Costo mensual real de 1 trabajador de tiempo completo</p>
+                                <p class="text-3xl font-black text-emerald-800" id="p-total">$0.00</p>
+                                <p class="text-sm text-slate-600" id="p-factor"></p>
+                            </div>
+                            <div class="rounded-xl p-4 text-center font-bold" id="p-veredicto"></div>
+                        </div>
+                    </div>
+                    <div class="px-6 pb-5 text-xs text-slate-500 space-y-1">
+                        <p><b>Fundamento:</b> LFT arts. 71 (prima dominical 25 %), 76 (vacaciones: 12 días el primer año), 80 (prima vacacional 25 %) y 87 (aguinaldo 15 días). LSS arts. 25 (1.05 %), 73 (prima media de riesgo por clase), 107 (0.70 %), 147 (1.75 %), 168 fr. I (retiro 2 %) y fr. II a) (cesantía y vejez), 211 (guarderías 1 %). Ley del INFONAVIT art. 29 fr. II (5 %).</p>
+                        <p>El tiempo extra dentro de los márgenes de la LFT <b>no integra</b> el salario base de cotización (LSS art. 27 fr. IX) y no genera aguinaldo ni vacaciones adicionales. El salario base de cotización se estima con el factor de integración (aguinaldo + prima vacacional) y no incluye otras prestaciones de tu empresa. Herramienta de apoyo; confirma con tu SUA/IDSE y tu contador.</p>
                     </div>
                 </div>
             </section>
@@ -271,7 +305,9 @@
             costoMensualExtra: document.getElementById('costo-mensual-extra'),
             countFaltantes: document.getElementById('count-faltantes'),
             fraccionJornada: document.getElementById('fraccion-jornada'),
-            costoMensualNuevo: document.getElementById('costo-mensual-nuevo')
+            costoMensualNuevo: document.getElementById('costo-mensual-nuevo'),
+            costoMensualReal: document.getElementById('costo-mensual-real'),
+            sobrecostoPct: document.getElementById('sobrecosto-pct')
         };
 
         const badgeAnio = document.getElementById('badge-anio');
@@ -336,6 +372,7 @@
             outputs.costoTriples.textContent = formatter.format(totalCostoTriples);
             outputs.costoSemanalExtra.textContent = formatter.format(costoTotalSemanalExtra);
             outputs.costoMensualExtra.textContent = formatter.format(costoTotalMensualExtra);
+            outputs.costoMensualExtra.dataset.v = costoTotalMensualExtra;
 
             const fraccionFTE = horasSemanales > 0 ? horasExtraReq / horasSemanales : 0;
             const costoContratacionProporcional = sueldoMensual * fraccionFTE;
@@ -343,7 +380,54 @@
             outputs.countFaltantes.textContent = horasExtraReq + 'h';
             outputs.fraccionJornada.textContent = (fraccionFTE * 100).toFixed(1) + '%';
             outputs.costoMensualNuevo.textContent = formatter.format(costoContratacionProporcional);
+            calcularPrestaciones();
         }
+
+        // ---- Sobrecosto de prestaciones y cuotas patronales (ver fundamento en el bloque)
+        const UMA_DIARIA = 117.31;   // UMA 2026 (INEGI, DOF 09/01/2026)
+        const CESANTIA_168 = [[1.50, 4.202], [2.00, 6.552], [2.50, 7.962], [3.00, 8.902], [3.50, 9.573], [4.00, 10.077], [Infinity, 11.875]];
+        const pIn = id => document.getElementById(id);
+        let cesantiaManual = false;
+        pIn('p-cesantia').addEventListener('input', () => { cesantiaManual = true; calcularPrestaciones(); });
+        ['p-aguinaldo', 'p-vacaciones', 'p-primavac', 'p-dominical', 'p-clase', 'p-otras', 'p-isn'].forEach(id => { pIn(id).addEventListener('input', calcularPrestaciones); pIn(id).addEventListener('change', calcularPrestaciones); });
+        function calcularPrestaciones() {
+            const S = parseFloat(inputs.sueldo.value) || 0, SD = S / 30;
+            const agui = Math.max(15, +pIn('p-aguinaldo').value || 15), vac = Math.max(12, +pIn('p-vacaciones').value || 12), pv = Math.max(25, +pIn('p-primavac').value || 25) / 100;
+            const FI = 1 + (agui + vac * pv) / 365, SBC = SD * FI, sbcMes = SBC * 30.4, enUMA = SBC / UMA_DIARIA;
+            if (!cesantiaManual) pIn('p-cesantia').value = CESANTIA_168.find(([l]) => enUMA <= l)[1].toFixed(3);
+            pIn('p-cesantia-nota').textContent = `Salario base de cotización ≈ ${enUMA.toFixed(2)} UMA. Valor de la tabla del art. 168 LSS (porcentaje pleno); en 2026 aplica un porcentaje de transición menor: ajústalo con tu SUA.`;
+            const filas = [
+                ['Aguinaldo (' + agui + ' días al año, provisión mensual)', SD * agui / 12],
+                ['Prima vacacional (' + Math.round(pv * 100) + ' % de ' + vac + ' días, provisión mensual)', SD * vac * pv / 12],
+                ['Prima dominical (25 % de un día por semana)', pIn('p-dominical').checked ? SD * 0.25 * SEMANAS_MES : 0],
+                ['Riesgo de trabajo (' + (+pIn('p-clase').value).toFixed(5) + ' %)', sbcMes * pIn('p-clase').value / 100],
+                ['Invalidez y vida (1.75 %)', sbcMes * 0.0175],
+                ['Enfermedades y maternidad: prestaciones en dinero (0.70 %) y gastos médicos de pensionados (1.05 %)', sbcMes * 0.0175],
+                ['Guarderías y prestaciones sociales (1 %)', sbcMes * 0.01],
+                ['Retiro (2 %)', sbcMes * 0.02],
+                ['Cesantía y vejez (' + (+pIn('p-cesantia').value || 0) + ' %)', sbcMes * (+pIn('p-cesantia').value || 0) / 100],
+                ['INFONAVIT (5 %)', sbcMes * 0.05],
+                ['Cuota fija y excedente de enfermedades y maternidad (' + (+pIn('p-otras').value || 0) + ' %)', S * (+pIn('p-otras').value || 0) / 100],
+                ['Impuesto sobre nóminas (' + (+pIn('p-isn').value || 0) + ' %)', S * (+pIn('p-isn').value || 0) / 100],
+            ];
+            const extra = filas.reduce((a, f) => a + f[1], 0), total = S + extra, pct = S ? extra / S * 100 : 0;
+            pIn('p-tabla').innerHTML = `<tr class="border-b"><td class="py-1 text-slate-600">Sueldo mensual</td><td class="py-1 text-right font-semibold">${formatter.format(S)}</td></tr>` +
+                filas.map(([t, v]) => `<tr class="border-b"><td class="py-1 text-slate-600">${t}</td><td class="py-1 text-right">${formatter.format(v)}</td></tr>`).join('') +
+                `<tr><td class="py-1 font-bold">Sobrecosto de prestaciones y cuotas</td><td class="py-1 text-right font-bold text-emerald-800">${formatter.format(extra)} (${pct.toFixed(1)} %)</td></tr>`;
+            pIn('p-total').textContent = formatter.format(total);
+            pIn('p-factor').textContent = `Factor de integración ${FI.toFixed(4)} · cada $1 de sueldo cuesta $${(total / (S || 1)).toFixed(2)}`;
+            const horasSemanales = parseFloat(inputs.jornada.value), hx = parseFloat(inputs.horasExtra.value) || 0, frac = horasSemanales ? hx / horasSemanales : 0;
+            const realFrac = total * frac;
+            outputs.costoMensualReal.textContent = formatter.format(realFrac);
+            outputs.sobrecostoPct.textContent = `Sobrecosto de prestaciones y cuotas: +${pct.toFixed(1)} % (${formatter.format(realFrac - S * frac)} al mes)`;
+            const tx = parseFloat(outputs.costoMensualExtra.dataset.v || 0), v = pIn('p-veredicto');
+            if (!hx) { v.className = 'rounded-xl p-4 text-center font-bold bg-slate-100 text-slate-700'; v.textContent = 'Captura las horas extra requeridas para comparar.'; return; }
+            const tiempoExtraGana = tx <= realFrac;
+            v.className = 'rounded-xl p-4 text-center font-bold ' + (tiempoExtraGana ? 'bg-orange-50 text-orange-800' : 'bg-emerald-50 text-emerald-800');
+            v.innerHTML = `Comparación mensual con prestaciones: tiempo extra ${formatter.format(tx)} vs. trabajador adicional ${formatter.format(realFrac)}.<br>` +
+                (tiempoExtraGana ? `Pagar tiempo extra cuesta ${formatter.format(realFrac - tx)} menos, pero recuerda el tope legal, la fatiga y el registro de jornada.` : `Contratar cuesta ${formatter.format(tx - realFrac)} menos al mes que pagar tiempo extra.`);
+        }
+
 
         inputs.jornada.addEventListener('change', calculate);
         inputs.tipoJornada.addEventListener('change', calculate);
